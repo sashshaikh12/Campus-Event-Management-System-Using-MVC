@@ -120,6 +120,9 @@ public class RoomManagerController {
             model.addAttribute("rejectedRequests", rejectedRequests);
             model.addAttribute("selectedStatus", status);
             
+            // Add allRequests to fix the Thymeleaf template issue
+            model.addAttribute("allRequests", roomRequests);
+            
             return "roommanager/room-requests";
         } catch (Exception e) {
             System.err.println("Error in roomRequests: " + e.getMessage());

@@ -87,23 +87,31 @@
                     <h1>Managed Events</h1>
                 </div>
                 
-                <!-- Filter Options -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <select class="form-select">
-                                    <option selected>All Events</option>
-                                    <option>Pending Attendance</option>
-                                    <option>Completed Events</option>
-                                    <option>Upcoming Events</option>
-                                </select>
+                <!-- Event Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Upcoming Events</h5>
+                                <p class="display-4" th:text="${upcomingCount}">0</p>
                             </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Search events...">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card bg-warning text-dark">
+                            <div class="card-body">
+                                <h5 class="card-title">Pending Events</h5>
+                                <p class="display-4" th:text="${pendingCount}">0</p>
                             </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-outline-primary w-100">Filter</button>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Completed Events</h5>
+                                <p class="display-4" th:text="${completedCount}">0</p>
                             </div>
                         </div>
                     </div>
@@ -115,39 +123,38 @@
                         <h5 class="mb-0">Events List</h5>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div th:if="${events == null || events.isEmpty()}" class="alert alert-info">
+                            <p class="mb-0">No events found for this faculty.</p>
+                        </div>
+                        <div th:if="${events != null && !events.isEmpty()}" class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
                                         <th>Event Name</th>
                                         <th>Date</th>
                                         <th>Organizer</th>
-                                        <th>Attendance Status</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Tech Conference 2023</td>
-                                        <td>15 Dec 2023</td>
-                                        <td>Tech Club</td>
-                                        <td><span class="badge bg-success">COMPLETED</span></td>
+                                    <tr th:each="event : ${events}">
+                                        <td th:text="${event.name}">Event Name</td>
+                                        <td th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy')}">Date</td>
+                                        <td th:if="${event.organizer != null}" th:text="${event.organizer.clubName}">Organizer</td>
+                                        <td th:if="${event.organizer == null}">Unknown</td>
                                         <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="#" class="btn btn-outline-primary">View</a>
-                                                <a href="#" class="btn btn-outline-info">View Attendance</a>
-                                            </div>
+                                            <span th:if="${event.status == 'COMPLETED'}" class="badge bg-success">COMPLETED</span>
+                                            <span th:if="${event.status == 'PENDING'}" class="badge bg-warning">PENDING</span>
+                                            <span th:if="${event.status == 'APPROVED'}" class="badge bg-info">UPCOMING</span>
+                                            <span th:if="${event.status == 'REJECTED'}" class="badge bg-danger">REJECTED</span>
+                                            <span th:if="${event.status == 'CANCELLED'}" class="badge bg-secondary">CANCELLED</span>
                                         </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Programming Contest</td>
-                                        <td>20 Dec 2023</td>
-                                        <td>CS Club</td>
-                                        <td><span class="badge bg-warning">PENDING</span></td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <a href="#" class="btn btn-outline-primary">View</a>
-                                                <a href="#" class="btn btn-outline-success">Take Attendance</a>
+                                                <a th:href="@{/faculty/events/{id}(id=${event.id})}" class="btn btn-outline-primary">View</a>
+                                                <a th:if="${event.status == 'APPROVED'}" th:href="@{/faculty/events/{id}/take-attendance(id=${event.id})}" class="btn btn-outline-success">Take Attendance</a>
+                                                <a th:if="${event.status == 'COMPLETED'}" th:href="@{/faculty/events/{id}/attendance(id=${event.id})}" class="btn btn-outline-info">View Attendance</a>
                                             </div>
                                         </td>
                                     </tr>
@@ -158,20 +165,35 @@
                 </div>
                 
                 <!-- Attendance Management Box -->
-                <div class="card mt-4">
+                <div class="card mt-4" th:if="${events != null && !events.isEmpty()}">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">Recent Attendance</h5>
                     </div>
                     <div class="card-body">
-                        <div class="alert alert-info">
-                            <h5>Tech Conference 2023</h5>
-                            <p><strong>Date:</strong> 15 Dec 2023</p>
-                            <p><strong>Attendance Rate:</strong> 85% (34/40 students)</p>
-                            <p><strong>Absentees:</strong> 6 students</p>
-                            <div>
-                                <a href="#" class="btn btn-sm btn-outline-primary">View Detailed Report</a>
-                                <a href="#" class="btn btn-sm btn-outline-warning">Flag Absentees</a>
+                        <div th:if="${events != null && !events.isEmpty() && events[0] != null}" class="alert alert-info">
+                            <h5 th:text="${events[0].name}">Event Name</h5>
+                            <p><strong>Date:</strong> <span th:text="${#temporals.format(events[0].startDateTime, 'dd MMM yyyy')}">Date</span></p>
+                            <div th:if="${events[0].attendedStudents != null && events[0].registeredStudents != null}">
+                                <p>
+                                    <strong>Attendance Rate:</strong> 
+                                    <span th:text="${events[0].attendedStudents.size() + '/' + events[0].registeredStudents.size() + ' students (' + (events[0].registeredStudents.size() > 0 ? (events[0].attendedStudents.size() * 100 / events[0].registeredStudents.size()) : 0) + '%)'}">
+                                        Attendance Rate
+                                    </span>
+                                </p>
+                                <p>
+                                    <strong>Absentees:</strong> 
+                                    <span th:text="${events[0].registeredStudents.size() - events[0].attendedStudents.size()} + ' students'">
+                                        Absentees
+                                    </span>
+                                </p>
                             </div>
+                            <div th:if="${events[0].id != null}">
+                                <a th:href="@{/faculty/events/{id}/attendance(id=${events[0].id})}" class="btn btn-sm btn-outline-primary">View Detailed Report</a>
+                                <a th:href="@{/faculty/events/{id}/attendance/flagabsent(id=${events[0].id})}" class="btn btn-sm btn-outline-warning">Flag Absentees</a>
+                            </div>
+                        </div>
+                        <div th:unless="${events != null && !events.isEmpty() && events[0] != null}" class="alert alert-warning">
+                            <p class="mb-0">No recent events found with attendance data.</p>
                         </div>
                     </div>
                 </div>
