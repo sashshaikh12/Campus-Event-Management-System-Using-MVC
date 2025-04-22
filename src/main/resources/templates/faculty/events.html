@@ -164,39 +164,7 @@
                     </div>
                 </div>
                 
-                <!-- Attendance Management Box -->
-                <div class="card mt-4" th:if="${events != null && !events.isEmpty()}">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="mb-0">Recent Attendance</h5>
-                    </div>
-                    <div class="card-body">
-                        <div th:if="${events != null && !events.isEmpty() && events[0] != null}" class="alert alert-info">
-                            <h5 th:text="${events[0].name}">Event Name</h5>
-                            <p><strong>Date:</strong> <span th:text="${#temporals.format(events[0].startDateTime, 'dd MMM yyyy')}">Date</span></p>
-                            <div th:if="${events[0].attendedStudents != null && events[0].registeredStudents != null}">
-                                <p>
-                                    <strong>Attendance Rate:</strong> 
-                                    <span th:text="${events[0].attendedStudents.size() + '/' + events[0].registeredStudents.size() + ' students (' + (events[0].registeredStudents.size() > 0 ? (events[0].attendedStudents.size() * 100 / events[0].registeredStudents.size()) : 0) + '%)'}">
-                                        Attendance Rate
-                                    </span>
-                                </p>
-                                <p>
-                                    <strong>Absentees:</strong> 
-                                    <span th:text="${events[0].registeredStudents.size() - events[0].attendedStudents.size()} + ' students'">
-                                        Absentees
-                                    </span>
-                                </p>
-                            </div>
-                            <div th:if="${events[0].id != null}">
-                                <a th:href="@{/faculty/events/{id}/attendance(id=${events[0].id})}" class="btn btn-sm btn-outline-primary">View Detailed Report</a>
-                                <a th:href="@{/faculty/events/{id}/attendance/flagabsent(id=${events[0].id})}" class="btn btn-sm btn-outline-warning">Flag Absentees</a>
-                            </div>
-                        </div>
-                        <div th:unless="${events != null && !events.isEmpty() && events[0] != null}" class="alert alert-warning">
-                            <p class="mb-0">No recent events found with attendance data.</p>
-                        </div>
-                    </div>
-                </div>
+               
             </div>
         </div>
     </div>
