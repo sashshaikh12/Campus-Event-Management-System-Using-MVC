@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "room_managers")
-@DiscriminatorValue("ROOM_MANAGER")
+@DiscriminatorValue("room_manager")
 public class RoomManager extends User {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_manager_id")
@@ -16,6 +16,9 @@ public class RoomManager extends User {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "room_manager_id")
     private List<RoomRequest> pendingRequests;
+    
+    // Adding department field for compatibility
+    private String department;
 
     public RoomManager() {
         super();
@@ -51,5 +54,15 @@ public class RoomManager extends User {
 
     public void addRoomRequest(RoomRequest request) {
         this.pendingRequests.add(request);
+    }
+    
+    @Override
+    public String getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(String department) {
+        this.department = department;
     }
 } 

@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "students")
-@DiscriminatorValue("STUDENT")
+@DiscriminatorValue("student")
 public class Student extends User {
     @Column(nullable = false, unique = true)
     private String rollNumber;
@@ -58,10 +58,12 @@ public class Student extends User {
         this.rollNumber = rollNumber;
     }
 
+    @Override
     public String getDepartment() {
         return department;
     }
 
+    @Override
     public void setDepartment(String department) {
         this.department = department;
     }

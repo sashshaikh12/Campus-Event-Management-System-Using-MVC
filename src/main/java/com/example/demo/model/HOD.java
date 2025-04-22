@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "hods")
-@DiscriminatorValue("HOD")
+@DiscriminatorValue("hod")
 public class HOD extends User {
     
     @Column(nullable = false)
@@ -34,10 +34,12 @@ public class HOD extends User {
         this.pendingAppeals = new ArrayList<>();
     }
 
+    @Override
     public String getDepartment() {
         return department;
     }
 
+    @Override
     public void setDepartment(String department) {
         this.department = department;
     }

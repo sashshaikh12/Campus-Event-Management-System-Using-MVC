@@ -42,6 +42,12 @@ public class Event {
     @Column(nullable = false)
     private String status; // PENDING, APPROVED, REJECTED, COMPLETED, CANCELLED
     
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+    
+    @Column(nullable = true)
+    private String department;
+    
     @ManyToMany(mappedBy = "registeredEvents", fetch = FetchType.LAZY)
     private List<Student> registeredStudents;
     
@@ -62,6 +68,7 @@ public class Event {
         this.registeredStudents = new ArrayList<>();
         this.attendedStudents = new ArrayList<>();
         this.status = "PENDING";
+        this.createdAt = LocalDateTime.now();
     }
 
     public Event(String name, String description, LocalDateTime startDateTime, LocalDateTime endDateTime, 
@@ -78,6 +85,7 @@ public class Event {
         this.status = "PENDING";
         this.registeredStudents = new ArrayList<>();
         this.attendedStudents = new ArrayList<>();
+        this.createdAt = LocalDateTime.now();
     }
 
     // Getters and Setters
@@ -159,6 +167,22 @@ public class Event {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+    
+    public String getDepartment() {
+        return department;
+    }
+    
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public List<Student> getRegisteredStudents() {

@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "club_heads")
-@DiscriminatorValue("CLUB_HEAD")
+@DiscriminatorValue("club_head")
 public class ClubHead extends User {
     
     @Column(nullable = false)
@@ -15,6 +15,9 @@ public class ClubHead extends User {
     
     @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Event> createdEvents;
+    
+    // Add department for compilation
+    private String department;
 
     public ClubHead() {
         super();
@@ -45,5 +48,15 @@ public class ClubHead extends User {
     
     public void addEvent(Event event) {
         this.createdEvents.add(event);
+    }
+    
+    @Override
+    public String getDepartment() {
+        return department;
+    }
+    
+    @Override
+    public void setDepartment(String department) {
+        this.department = department;
     }
 } 

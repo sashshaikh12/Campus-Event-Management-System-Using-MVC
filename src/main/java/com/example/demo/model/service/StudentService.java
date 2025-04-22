@@ -39,7 +39,11 @@ public class StudentService {
             return null; // Can't appeal if not blacklisted
         }
         
-        Appeal appeal = new Appeal(student, reason);
+        Appeal appeal = new Appeal();
+        appeal.setStudent(student);
+        appeal.setReason(reason);
+        appeal.setStatus("PENDING");
+        appeal.setDescription("Appeal to remove blacklisting");
         hod.addAppeal(appeal);
         
         return appeal;

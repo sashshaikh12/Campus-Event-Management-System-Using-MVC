@@ -26,6 +26,10 @@ public abstract class User {
     
     @Column(nullable = false)
     private String role;
+    
+    // Adding this field to fix compilation issues
+    @Transient
+    private String department;
 
     public User() {
         this.id = UUID.randomUUID().toString();
@@ -87,5 +91,14 @@ public abstract class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+    
+    // Add getter/setter for department to resolve the property not found issue
+    public String getDepartment() {
+        return department;
+    }
+    
+    public void setDepartment(String department) {
+        this.department = department;
     }
 } 

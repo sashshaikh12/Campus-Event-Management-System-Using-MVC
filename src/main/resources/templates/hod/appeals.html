@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Appeals - HOD Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+            position: fixed;
+        }
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            color: white;
+            background-color: #495057;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .nav-item .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+        .badge-pending {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .badge-resolved {
+            background-color: #28a745;
+            color: white;
+        }
+        .appeal-card {
+            margin-bottom: 20px;
+            border-left: 4px solid #6c757d;
+        }
+        .appeal-card.pending {
+            border-left-color: #ffc107;
+        }
+        .appeal-card.resolved {
+            border-left-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Campus Event Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/hod/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <div class="d-flex">
+        <div class="sidebar p-3" style="width: 250px;">
+            <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-white">
+                <span>HOD Panel</span>
+            </h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/hod/dashboard">
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/hod/event-requests">
+                        Event Requests
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/hod/appeals">
+                        Student Appeals
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile">
+                        Profile
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content flex-grow-1">
+            <div class="container-fluid">
+                <h2 class="mb-4">Student Appeals</h2>
+                
+                <!-- Filters -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Filters</h5>
+                                <form class="row g-3">
+                                    <div class="col-md-3">
+                                        <label for="statusFilter" class="form-label">Status</label>
+                                        <select id="statusFilter" class="form-select">
+                                            <option value="all" selected>All</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="resolved">Resolved</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="dateFilter" class="form-label">Date Range</label>
+                                        <input type="date" class="form-control" id="dateFilter">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="studentFilter" class="form-label">Student Name/ID</label>
+                                        <input type="text" class="form-control" id="studentFilter" placeholder="Search by student">
+                                    </div>
+                                    <div class="col-md-3 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Appeals List -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- Pending Appeals -->
+                        <h4 class="mb-3">Pending Appeals <span class="badge badge-pending rounded-pill">3</span></h4>
+                        
+                        <div class="card appeal-card pending">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title">Appeal for Event Attendance Correction</h5>
+                                    <span class="badge badge-pending rounded-pill">Pending</span>
+                                </div>
+                                <h6 class="card-subtitle mb-2 text-muted">Appeal ID: APL-2023-001</h6>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Student Name:</strong> John Doe</p>
+                                        <p><strong>Student ID:</strong> S12345</p>
+                                        <p><strong>Event:</strong> Technical Symposium (EVT-2023-001)</p>
+                                        <p><strong>Submitted On:</strong> 22-Apr-2023</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Appeal Reason:</strong></p>
+                                        <p>I attended the event but my attendance was not marked correctly. I have attached my event participation certificate as proof.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mt-3">
+                                    <button class="btn btn-info me-2">View Details</button>
+                                    <button class="btn btn-success me-2">Approve</button>
+                                    <button class="btn btn-danger me-2">Reject</button>
+                                    <button class="btn btn-secondary">Request More Info</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card appeal-card pending">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title">Appeal for Late Registration Approval</h5>
+                                    <span class="badge badge-pending rounded-pill">Pending</span>
+                                </div>
+                                <h6 class="card-subtitle mb-2 text-muted">Appeal ID: APL-2023-002</h6>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Student Name:</strong> Jane Smith</p>
+                                        <p><strong>Student ID:</strong> S67890</p>
+                                        <p><strong>Event:</strong> Cultural Fest (EVT-2023-002)</p>
+                                        <p><strong>Submitted On:</strong> 23-Apr-2023</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Appeal Reason:</strong></p>
+                                        <p>I was unable to register for the event before the deadline due to medical reasons. I have attached my medical certificate as proof.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mt-3">
+                                    <button class="btn btn-info me-2">View Details</button>
+                                    <button class="btn btn-success me-2">Approve</button>
+                                    <button class="btn btn-danger me-2">Reject</button>
+                                    <button class="btn btn-secondary">Request More Info</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card appeal-card pending">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title">Appeal for Participation Certificate</h5>
+                                    <span class="badge badge-pending rounded-pill">Pending</span>
+                                </div>
+                                <h6 class="card-subtitle mb-2 text-muted">Appeal ID: APL-2023-003</h6>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Student Name:</strong> Mark Johnson</p>
+                                        <p><strong>Student ID:</strong> S54321</p>
+                                        <p><strong>Event:</strong> Research Conference (EVT-2023-003)</p>
+                                        <p><strong>Submitted On:</strong> 24-Apr-2023</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Appeal Reason:</strong></p>
+                                        <p>I participated in the event but did not receive my participation certificate. My attendance was marked correctly in the system.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mt-3">
+                                    <button class="btn btn-info me-2">View Details</button>
+                                    <button class="btn btn-success me-2">Approve</button>
+                                    <button class="btn btn-danger me-2">Reject</button>
+                                    <button class="btn btn-secondary">Request More Info</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Resolved Appeals -->
+                        <h4 class="mb-3 mt-5">Resolved Appeals <span class="badge badge-resolved rounded-pill">2</span></h4>
+                        
+                        <div class="card appeal-card resolved">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title">Appeal for Event Registration Fee Waiver</h5>
+                                    <span class="badge badge-resolved rounded-pill">Approved</span>
+                                </div>
+                                <h6 class="card-subtitle mb-2 text-muted">Appeal ID: APL-2023-004</h6>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Student Name:</strong> Sarah Williams</p>
+                                        <p><strong>Student ID:</strong> S98765</p>
+                                        <p><strong>Event:</strong> Technical Symposium (EVT-2023-001)</p>
+                                        <p><strong>Resolved On:</strong> 20-Apr-2023</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Appeal Reason:</strong></p>
+                                        <p>I am requesting a fee waiver for the event as I am from an economically disadvantaged background. I have attached the relevant documents.</p>
+                                        <p><strong>Resolution Note:</strong> Fee waiver approved based on provided documentation.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mt-3">
+                                    <button class="btn btn-info">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card appeal-card resolved">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h5 class="card-title">Appeal for Special Accommodation</h5>
+                                    <span class="badge badge-resolved rounded-pill">Rejected</span>
+                                </div>
+                                <h6 class="card-subtitle mb-2 text-muted">Appeal ID: APL-2023-005</h6>
+                                <div class="row mt-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Student Name:</strong> Robert Brown</p>
+                                        <p><strong>Student ID:</strong> S13579</p>
+                                        <p><strong>Event:</strong> Sports Meet (EVT-2023-004)</p>
+                                        <p><strong>Resolved On:</strong> 18-Apr-2023</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Appeal Reason:</strong></p>
+                                        <p>I am requesting special accommodation for the sports meet as I have a physical disability. I have attached my medical certificate.</p>
+                                        <p><strong>Resolution Note:</strong> Rejected as the requested accommodation cannot be provided due to venue limitations. Alternative event opportunities have been suggested.</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mt-3">
+                                    <button class="btn btn-info">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
