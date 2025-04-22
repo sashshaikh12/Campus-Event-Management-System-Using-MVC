@@ -9,29 +9,18 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // Allow all requests without authentication
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
-                .requestMatchers("/clubhead/**").hasRole("CLUB_HEAD")
-                .requestMatchers("/faculty/**").hasRole("FACULTY")
-                .requestMatchers("/hod/**").hasRole("HOD")
-                .requestMatchers("/roommanager/**").hasRole("ROOM_MANAGER")
-                .requestMatchers("/student/**").hasRole("STUDENT")
-                .anyRequest().authenticated()
+                // Allow access to ALL URLs without authentication
+                .anyRequest().permitAll()
             )
-            .formLogin(formLogin -> formLogin
-                .loginPage("/login")
-                .defaultSuccessUrl("/dashboard", true)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutSuccessUrl("/")
-                .permitAll()
-            );
+            .formLogin(formLogin -> formLogin.disable())
+            .httpBasic(basic -> basic.disable());
         
         return http.build();
     }

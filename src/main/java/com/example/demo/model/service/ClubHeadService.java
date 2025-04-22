@@ -9,7 +9,12 @@ import com.example.demo.model.Room;
 import com.example.demo.model.RoomRequest;
 import com.example.demo.model.RoomManager;
 import com.example.demo.model.factory.EventFactory;
+import com.example.demo.repository.EventRepository;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.RoomRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,9 +26,19 @@ import java.util.List;
 @Service
 public class ClubHeadService {
     
+    @Autowired
+    private EventRepository eventRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private RoomRepository roomRepository;
+    
     /**
      * Create a new event and add it to the club head's list of events
      */
+    @Transactional
     public Event createEvent(ClubHead clubHead, String name, String description, LocalDateTime startDateTime, 
                             LocalDateTime endDateTime, String venue, int maxParticipants, Faculty faculty) {
         
@@ -34,12 +49,15 @@ public class ClubHeadService {
         // Add the event to the club head's list - Creator pattern (GRASP)
         clubHead.addEvent(event);
         
-        return event;
+        // Save the updated clubhead and event to the database
+        userRepository.save(clubHead);
+        return eventRepository.save(event);
     }
     
     /**
      * Create an event request and send it to HOD for approval
      */
+    @Transactional
     public EventRequest createEventRequest(Event event, HOD hod) {
         // Using the factory to create the event request
         EventRequest eventRequest = EventFactory.createEventRequest(event);
@@ -47,12 +65,16 @@ public class ClubHeadService {
         // Send the request to HOD
         hod.addEventRequest(eventRequest);
         
+        // Save the updated HOD to the database
+        userRepository.save(hod);
+        
         return eventRequest;
     }
     
     /**
      * Create a room request and send it to Room Manager
      */
+    @Transactional
     public RoomRequest createRoomRequest(Event event, Room room, ClubHead clubHead, 
                                         String requiredServices, RoomManager roomManager) {
         
@@ -62,6 +84,9 @@ public class ClubHeadService {
         // Send the request to Room Manager
         roomManager.addRoomRequest(roomRequest);
         
+        // Save the updated room manager to the database
+        userRepository.save(roomManager);
+        
         return roomRequest;
     }
     
@@ -69,7 +94,7 @@ public class ClubHeadService {
      * Get all events created by a club head
      */
     public List<Event> getClubHeadEvents(ClubHead clubHead) {
-        return clubHead.getCreatedEvents();
+        return eventRepository.findByOrganizer(clubHead);
     }
     
     /**

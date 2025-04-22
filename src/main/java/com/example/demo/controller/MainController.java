@@ -3,47 +3,36 @@ package com.example.demo.controller;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class MainController {
 
     @GetMapping("/")
-    public String home() {
+    public String index() {
         return "home";
     }
-    
+
     @GetMapping("/login")
-    public String loginPage() {
+    public String login() {
         return "login";
     }
-    
+
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
-        }
-        
-        // Get user roles
-        String role = authentication.getAuthorities().stream()
-                .findFirst()
-                .map(authority -> authority.getAuthority().replace("ROLE_", ""))
-                .orElse("");
-        
-        switch (role) {
-            case "CLUB_HEAD":
+        if (authentication != null && authentication.isAuthenticated()) {
+            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CLUB_HEAD"))) {
                 return "redirect:/clubhead/dashboard";
-            case "FACULTY":
+            } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_FACULTY"))) {
                 return "redirect:/faculty/dashboard";
-            case "HOD":
+            } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_HOD"))) {
                 return "redirect:/hod/dashboard";
-            case "ROOM_MANAGER":
+            } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ROOM_MANAGER"))) {
                 return "redirect:/roommanager/dashboard";
-            case "STUDENT":
+            } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_STUDENT"))) {
                 return "redirect:/student/dashboard";
-            default:
-                return "redirect:/login";
+            }
         }
+        return "redirect:/login";
     }
 } 

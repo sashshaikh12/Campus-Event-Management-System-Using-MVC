@@ -39,6 +39,10 @@
                 Invalid username or password
             </div>
             
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}">
+                Error message
+            </div>
+            
             <div th:if="${param.logout}" class="alert alert-success" role="alert">
                 You have been logged out
             </div>
@@ -47,18 +51,23 @@
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" name="username" required>
-                    <div class="form-text">Try: clubhead, faculty, hod, roommanager, student</div>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" name="password" required>
-                    <div class="form-text">Password is 'password' for all demo users</div>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
             
             <div class="mt-3 text-center">
-                <a href="/" class="text-decoration-none">Back to Home</a>
+                <a href="/" class="text-decoration-none">Back to Home</a> | 
+                <a href="/debug-login" class="text-decoration-none text-danger">Debug Login</a>
+            </div>
+            
+            <div class="mt-3">
+                <h6>Test Credentials:</h6>
+                <p><strong>Default users:</strong> username: clubhead, faculty, hod, roommanager, student with password: password</p>
+                <p><strong>Custom user:</strong> username: user, password: 123</p>
             </div>
         </div>
     </div>

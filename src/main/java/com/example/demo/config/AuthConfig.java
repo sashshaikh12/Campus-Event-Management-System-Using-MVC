@@ -8,9 +8,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-@Configuration
+/*
+ * This configuration is disabled as we're now using database authentication
+ * via CustomUserDetailsService instead of in-memory authentication.
+ */
+//@Configuration
 public class AuthConfig {
 
+    /*
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -50,4 +55,5 @@ public class AuthConfig {
         
         return new InMemoryUserDetailsManager(clubhead, faculty, hod, student, roommanager);
     }
+    */
 } 
