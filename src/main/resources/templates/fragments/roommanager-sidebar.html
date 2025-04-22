@@ -1,0 +1,26 @@
+<!-- Room Manager Sidebar Fragment -->
+<div th:fragment="sidebar">
+    <h5 class="p-3 mb-3 border-bottom">Room Manager Dashboard</h5>
+    <ul class="nav flex-column mb-auto">
+        <li class="nav-item">
+            <a th:href="@{/roommanager/dashboard}" class="nav-link">
+                Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/roommanager/rooms}" class="nav-link">
+                Manage Rooms
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/roommanager/room-requests}" class="nav-link">
+                Room Requests
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/roommanager/available-rooms}" class="nav-link">
+                Find Available Rooms
+            </a>
+        </li>
+    </ul>
+</div> 

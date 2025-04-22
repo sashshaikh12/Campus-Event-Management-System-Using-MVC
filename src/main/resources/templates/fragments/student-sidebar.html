@@ -1,0 +1,26 @@
+<!-- Student Sidebar Fragment -->
+<div th:fragment="sidebar">
+    <h5 class="p-3 mb-3 border-bottom">Student Dashboard</h5>
+    <ul class="nav flex-column mb-auto">
+        <li class="nav-item">
+            <a th:href="@{/student/dashboard}" class="nav-link">
+                Dashboard
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/student/events}" class="nav-link">
+                Browse Events
+            </a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/student/registered-events}" class="nav-link">
+                My Registered Events
+            </a>
+        </li>
+        <li class="nav-item" th:if="${student != null and student.blacklisted}">
+            <a th:href="@{/student/blacklist-appeal}" class="nav-link">
+                Submit Appeal
+            </a>
+        </li>
+    </ul>
+</div> 

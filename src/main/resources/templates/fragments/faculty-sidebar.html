@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="sidebar">
+        <h5 class="p-3 mb-3 border-bottom">Faculty Dashboard</h5>
+        <ul class="nav flex-column mb-auto">
+            <li class="nav-item">
+                <a th:href="@{/faculty/dashboard}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/faculty/dashboard' ? 'active' : ''}">
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/faculty/events}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/faculty/events' ? 'active' : ''}">
+                    Managed Events
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:href="@{/faculty/students/blacklisted}" class="nav-link" th:classappend="${#httpServletRequest.requestURI == '/faculty/students/blacklisted' ? 'active' : ''}">
+                    Blacklisted Students
+                </a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html> 
