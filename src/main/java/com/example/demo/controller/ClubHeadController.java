@@ -3,16 +3,23 @@ package com.example.demo.controller;
 import com.example.demo.model.ClubHead;
 import com.example.demo.model.Event;
 import com.example.demo.model.Faculty;
+import com.example.demo.model.RoomRequest;
+import com.example.demo.model.Room;
 import com.example.demo.model.service.EventService;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.RoomRequestRepository;
+import com.example.demo.repository.RoomRepository;
+import com.example.demo.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -24,6 +31,15 @@ public class ClubHeadController {
     
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private RoomRequestRepository roomRequestRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
     
     /**
      * Get the fixed ClubHead for demo purposes
@@ -262,15 +278,41 @@ public class ClubHeadController {
     
     @GetMapping("/room-requests")
     public String roomRequests(Model model) {
-        try {
-            ClubHead clubHead = getCurrentClubHead();
-            model.addAttribute("clubHead", clubHead);
-            return "clubhead/room-requests";
-        } catch (Exception e) {
-            System.err.println("Error in roomRequests: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "An error occurred while loading room requests");
-            return "error";
-        }
+        ClubHead clubHead = getCurrentClubHead();
+        List<RoomRequest> roomRequests = roomRequestRepository.findByRequestedBy_Id("user-003");
+        model.addAttribute("clubHead", clubHead);
+        model.addAttribute("roomRequests", roomRequests);
+        return "clubhead/room-requests";
+    }
+    
+    @PostMapping("/room-requests")
+    public String submitRoomRequest(
+            @RequestParam("roomId") String roomId,
+            @RequestParam("requestDate") String requestDate,
+            @RequestParam("requiredServices") String requiredServices,
+            @RequestParam("comments") String comments,
+            @RequestParam("eventId") String eventId,
+            RedirectAttributes redirectAttributes) {
+
+        RoomRequest request = new RoomRequest();
+
+        // Fetch and set related entities
+        Room room = roomRepository.findById("room-103").orElse(null); // hardcoded
+        ClubHead clubHead = (ClubHead) userRepository.findById("user-003").orElse(null); // hardcoded
+        Event event = eventRepository.findById(eventId).orElse(null);
+
+        request.setRoom(room);
+        request.setRequestedBy(clubHead);
+        request.setEvent(event);
+
+        request.setRequestDate(LocalDateTime.parse(requestDate));
+        request.setRequiredServices(requiredServices);
+        request.setComments(comments);
+        request.setStatus("PENDING");
+
+        roomRequestRepository.save(request);
+
+        redirectAttributes.addFlashAttribute("success", "Room request submitted!");
+        return "redirect:/clubhead/room-requests";
     }
 }
