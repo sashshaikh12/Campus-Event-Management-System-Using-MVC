@@ -29,6 +29,13 @@
             color: #fff;
             background-color: #0d6efd;
         }
+        .status-badge {
+            font-size: 0.85rem;
+            padding: 0.35rem 0.65rem;
+        }
+        .event-actions .btn {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
@@ -48,7 +55,7 @@
                         <a class="nav-link" href="/clubhead/dashboard">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Logout</a>
+                        <a class="nav-link" href="/logout">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -60,7 +67,7 @@
             <!-- Sidebar -->
             <div class="col-md-3 mb-4">
                 <div class="sidebar">
-                    <h5 class="p-3 mb-3 border-bottom">Club Head Menu</h5>
+                    <h5 class="p-3 mb-3 border-bottom" th:text="${clubHead.clubName}">Club Head Menu</h5>
                     <ul class="nav nav-pills flex-column">
                         <li class="nav-item">
                             <a href="/clubhead/dashboard" class="nav-link">Dashboard</a>
@@ -72,10 +79,13 @@
                             <a href="/clubhead/events/create" class="nav-link">Create Event</a>
                         </li>
                         <li>
-                            <a href="/" class="nav-link">Profile</a>
+                            <a href="/clubhead/room-requests" class="nav-link">Room Requests</a>
                         </li>
                         <li>
-                            <a href="/" class="nav-link text-danger">Logout</a>
+                            <a href="/clubhead/profile" class="nav-link">Profile</a>
+                        </li>
+                        <li>
+                            <a href="/logout" class="nav-link text-danger">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -85,71 +95,192 @@
             <div class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1>My Events</h1>
-                    <a href="/clubhead/events/create" class="btn btn-primary">Create New Event</a>
+                    <a href="/clubhead/events/create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create New Event
+                    </a>
                 </div>
                 
-                <!-- Filter Options -->
+                <!-- Alert messages -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+                    <span th:text="${successMessage}">Success message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
+                    <span th:text="${errorMessage}">Error message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <!-- Filters -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <select class="form-select">
-                                    <option selected>All Events</option>
-                                    <option>Pending Events</option>
-                                    <option>Approved Events</option>
-                                    <option>Rejected Events</option>
+                        <h5 class="card-title">Filters</h5>
+                        <form class="row g-3" method="get">
+                            <div class="col-md-4">
+                                <label for="statusFilter" class="form-label">Status</label>
+                                <select id="statusFilter" name="status" class="form-select">
+                                    <option value="" selected>All</option>
+                                    <option value="PENDING">Pending</option>
+                                    <option value="APPROVED">Approved</option>
+                                    <option value="REJECTED">Rejected</option>
+                                    <option value="COMPLETED">Completed</option>
+                                    <option value="CANCELLED">Cancelled</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <input type="text" class="form-control" placeholder="Search for events...">
+                            <div class="col-md-4">
+                                <label for="sortBy" class="form-label">Sort By</label>
+                                <select id="sortBy" name="sort" class="form-select">
+                                    <option value="createdAt" selected>Creation Date</option>
+                                    <option value="startDateTime">Start Date</option>
+                                    <option value="name">Event Name</option>
+                                </select>
                             </div>
-                            <div class="col-md-2">
-                                <button class="btn btn-outline-primary w-100">Filter</button>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 
-                <!-- Events Table -->
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Events List</h5>
+                <!-- No events message -->
+                <div class="alert alert-info" th:if="${events == null || events.isEmpty()}">
+                    <p class="mb-0">You haven't created any events yet. Click on "Create New Event" to get started.</p>
+                </div>
+                
+                <!-- Events list -->
+                <div class="card mb-4" th:if="${events != null && !events.isEmpty()}">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">My Events</h5>
                     </div>
-                    <div class="card-body">
-                        <div class="alert alert-info">
-                            You haven't created any events yet. Click "Create New Event" to get started.
-                        </div>
-                        
-                        <!-- Sample Event Table (Empty for Demo) -->
-                        <div class="table-responsive d-none">
-                            <table class="table table-hover">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
                                 <thead>
                                     <tr>
                                         <th>Event Name</th>
-                                        <th>Date</th>
+                                        <th>Date & Time</th>
                                         <th>Venue</th>
+                                        <th>Faculty</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Sample data row (hidden) -->
-                                    <tr>
-                                        <td>Tech Conference 2023</td>
-                                        <td>15 Dec 2023</td>
-                                        <td>Main Auditorium</td>
-                                        <td><span class="badge bg-warning">PENDING</span></td>
+                                    <tr th:each="event : ${events}">
                                         <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="#" class="btn btn-outline-primary">View</a>
-                                                <a href="#" class="btn btn-outline-success">Request Room</a>
-                                            </div>
+                                            <strong th:text="${event.name}">Tech Conference</strong>
+                                        </td>
+                                        <td>
+                                            <div th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy, HH:mm')}">12 Jun 2023, 09:00</div>
+                                            <small class="text-muted" th:text="'to ' + ${#temporals.format(event.endDateTime, 'HH:mm')}">to 17:00</small>
+                                        </td>
+                                        <td th:text="${event.venue}">Main Auditorium</td>
+                                        <td th:text="${event.faculty.name}">Dr. Smith</td>
+                                        <td>
+                                            <span th:if="${event.status == 'PENDING'}" class="badge bg-warning status-badge">Pending</span>
+                                            <span th:if="${event.status == 'APPROVED'}" class="badge bg-success status-badge">Approved</span>
+                                            <span th:if="${event.status == 'REJECTED'}" class="badge bg-danger status-badge">Rejected</span>
+                                            <span th:if="${event.status == 'COMPLETED'}" class="badge bg-info status-badge">Completed</span>
+                                            <span th:if="${event.status == 'CANCELLED'}" class="badge bg-secondary status-badge">Cancelled</span>
+                                        </td>
+                                        <td class="event-actions">
+                                            <!-- View details button (available for all) -->
+                                            <button class="btn btn-sm btn-info" data-bs-toggle="modal" th:data-bs-target="'#detailsModal-' + ${event.id}">
+                                                Details
+                                            </button>
+                                            
+                                            <!-- Edit button (only for PENDING events) -->
+                                            <a th:if="${event.status == 'PENDING'}" th:href="@{/clubhead/events/{id}/edit(id=${event.id})}" class="btn btn-sm btn-warning">
+                                                Edit
+                                            </a>
+                                            
+                                            <!-- Attendance button (only for APPROVED or COMPLETED events) -->
+                                            <a th:if="${event.status == 'APPROVED' || event.status == 'COMPLETED'}" th:href="@{/clubhead/events/{id}/attendance(id=${event.id})}" class="btn btn-sm btn-primary">
+                                                Attendance
+                                            </a>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Event Details Modals -->
+    <div th:each="event : ${events}" th:id="'detailsModal-' + ${event.id}" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" th:text="${event.name}">Event Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Event Information</h6>
+                            <table class="table table-borderless table-sm">
+                                <tr>
+                                    <th style="width: 40%;">Event ID:</th>
+                                    <td th:text="${event.id}">event-123</td>
+                                </tr>
+                                <tr>
+                                    <th>Description:</th>
+                                    <td th:text="${event.description}">Event description...</td>
+                                </tr>
+                                <tr>
+                                    <th>Start Date/Time:</th>
+                                    <td th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy, HH:mm')}">12 Jun 2023, 09:00</td>
+                                </tr>
+                                <tr>
+                                    <th>End Date/Time:</th>
+                                    <td th:text="${#temporals.format(event.endDateTime, 'dd MMM yyyy, HH:mm')}">12 Jun 2023, 17:00</td>
+                                </tr>
+                                <tr>
+                                    <th>Venue:</th>
+                                    <td th:text="${event.venue}">Main Auditorium</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Additional Information</h6>
+                            <table class="table table-borderless table-sm">
+                                <tr>
+                                    <th style="width: 40%;">Status:</th>
+                                    <td>
+                                        <span th:if="${event.status == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                        <span th:if="${event.status == 'APPROVED'}" class="badge bg-success">Approved</span>
+                                        <span th:if="${event.status == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                                        <span th:if="${event.status == 'COMPLETED'}" class="badge bg-info">Completed</span>
+                                        <span th:if="${event.status == 'CANCELLED'}" class="badge bg-secondary">Cancelled</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Faculty:</th>
+                                    <td th:text="${event.faculty.name + ' (' + event.faculty.department + ')'}">Dr. Smith (Computer Science)</td>
+                                </tr>
+                                <tr>
+                                    <th>Max Participants:</th>
+                                    <td th:text="${event.maxParticipants}">100</td>
+                                </tr>
+                                <tr>
+                                    <th>Created:</th>
+                                    <td th:text="${#temporals.format(event.createdAt, 'dd MMM yyyy, HH:mm')}">10 Jun 2023, 14:30</td>
+                                </tr>
+                                <tr>
+                                    <th>Registered Students:</th>
+                                    <td th:text="${event.registeredStudents.size() + ' / ' + event.maxParticipants}">45 / 100</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a th:if="${event.status == 'PENDING'}" th:href="@{/clubhead/events/{id}/edit(id=${event.id})}" class="btn btn-warning">Edit Event</a>
+                    <a th:if="${event.status == 'APPROVED' || event.status == 'COMPLETED'}" th:href="@{/clubhead/events/{id}/attendance(id=${event.id})}" class="btn btn-primary">Manage Attendance</a>
                 </div>
             </div>
         </div>

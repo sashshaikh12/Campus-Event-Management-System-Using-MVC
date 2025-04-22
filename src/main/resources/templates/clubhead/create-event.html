@@ -49,7 +49,7 @@
                         <a class="nav-link" href="/clubhead/dashboard">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Logout</a>
+                        <a class="nav-link" href="/logout">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -61,7 +61,7 @@
             <!-- Sidebar -->
             <div class="col-md-3 mb-4">
                 <div class="sidebar">
-                    <h5 class="p-3 mb-3 border-bottom">Club Head Menu</h5>
+                    <h5 class="p-3 mb-3 border-bottom" th:text="${clubHead.clubName}">Club Head Menu</h5>
                     <ul class="nav nav-pills flex-column">
                         <li class="nav-item">
                             <a href="/clubhead/dashboard" class="nav-link">Dashboard</a>
@@ -73,10 +73,13 @@
                             <a href="/clubhead/events/create" class="nav-link active">Create Event</a>
                         </li>
                         <li>
-                            <a href="/" class="nav-link">Profile</a>
+                            <a href="/clubhead/room-requests" class="nav-link">Room Requests</a>
                         </li>
                         <li>
-                            <a href="/" class="nav-link text-danger">Logout</a>
+                            <a href="/clubhead/profile" class="nav-link">Profile</a>
+                        </li>
+                        <li>
+                            <a href="/logout" class="nav-link text-danger">Logout</a>
                         </li>
                     </ul>
                 </div>
@@ -87,6 +90,17 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h1>Create New Event</h1>
                     <a href="/clubhead/events" class="btn btn-outline-secondary">Back to Events</a>
+                </div>
+                
+                <!-- Alert messages -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+                    <span th:text="${successMessage}">Success message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
+                    <span th:text="${errorMessage}">Error message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
                 
                 <div class="card">
@@ -128,9 +142,7 @@
                                 <label for="facultyId" class="form-label">Faculty Coordinator*</label>
                                 <select class="form-select" id="facultyId" name="facultyId" required>
                                     <option value="" selected disabled>Select a faculty coordinator</option>
-                                    <option value="2">Dr. Smith (Computer Science)</option>
-                                    <option value="faculty2">Dr. Johnson (Electrical Engineering)</option>
-                                    <option value="faculty3">Prof. Williams (Business Administration)</option>
+                                    <option th:each="faculty : ${faculties}" th:value="${faculty.id}" th:text="${faculty.name + ' (' + faculty.department + ')'}">Dr. Smith (Computer Science)</option>
                                 </select>
                             </div>
                             

@@ -33,6 +33,13 @@
             right: 0;
             left: auto;
         }
+        /* Modal styles */
+        .modal-header {
+            border-bottom: none;
+        }
+        .modal-footer {
+            border-top: none;
+        }
     </style>
 </head>
 <body>
@@ -97,7 +104,12 @@
         <!-- Main Content -->
         <div class="content flex-grow-1">
             <div class="container-fluid">
-                <h2 class="mb-4">Event Requests</h2>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Event Requests</h2>
+                    <div>
+                        <span class="badge bg-primary" th:text="${hod.department}">Department</span>
+                    </div>
+                </div>
                 
                 <!-- Filters -->
                 <div class="row mb-4">
@@ -105,25 +117,17 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Filters</h5>
-                                <form class="row g-3">
-                                    <div class="col-md-3">
+                                <form class="row g-3" method="get" action="/hod/event-requests">
+                                    <div class="col-md-4">
                                         <label for="statusFilter" class="form-label">Status</label>
-                                        <select id="statusFilter" class="form-select">
-                                            <option value="all" selected>All</option>
-                                            <option value="pending">Pending</option>
-                                            <option value="approved">Approved</option>
-                                            <option value="rejected">Rejected</option>
+                                        <select id="statusFilter" name="status" class="form-select">
+                                            <option value="" th:selected="${selectedStatus == null}">All</option>
+                                            <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Pending</option>
+                                            <option value="APPROVED" th:selected="${selectedStatus == 'APPROVED'}">Approved</option>
+                                            <option value="REJECTED" th:selected="${selectedStatus == 'REJECTED'}">Rejected</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label for="dateFilter" class="form-label">Date Range</label>
-                                        <input type="date" class="form-control" id="dateFilter">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="organizerFilter" class="form-label">Organizer</label>
-                                        <input type="text" class="form-control" id="organizerFilter" placeholder="Search by organizer">
-                                    </div>
-                                    <div class="col-md-3 d-flex align-items-end">
+                                    <div class="col-md-4 d-flex align-items-end">
                                         <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
                                     </div>
                                 </form>
@@ -132,94 +136,60 @@
                     </div>
                 </div>
                 
-                <!-- Pending Requests -->
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header bg-warning text-white">
-                                <h5 class="mb-0">Pending Requests</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Event ID</th>
-                                                <th>Event Name</th>
-                                                <th>Organizer</th>
-                                                <th>Date &amp; Time</th>
-                                                <th>Venue</th>
-                                                <th>Faculty Coordinator</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>EVT-2023-001</td>
-                                                <td>Technical Symposium</td>
-                                                <td>Computer Science Club</td>
-                                                <td>21-Apr-2023, 10:00 AM</td>
-                                                <td>Main Auditorium</td>
-                                                <td>Dr. Jane Smith</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-info">View</button>
-                                                    <button class="btn btn-sm btn-success">Approve</button>
-                                                    <button class="btn btn-sm btn-danger">Reject</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>EVT-2023-002</td>
-                                                <td>Cultural Fest</td>
-                                                <td>Fine Arts Club</td>
-                                                <td>25-Apr-2023, 05:00 PM</td>
-                                                <td>Open Air Theatre</td>
-                                                <td>Prof. Robert Johnson</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-info">View</button>
-                                                    <button class="btn btn-sm btn-success">Approve</button>
-                                                    <button class="btn btn-sm btn-danger">Reject</button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Alert for no event requests -->
+                <div class="alert alert-info" th:if="${eventRequests == null || eventRequests.isEmpty()}">
+                    <p class="mb-0">No event requests found matching your criteria.</p>
                 </div>
                 
-                <!-- Approved Requests -->
-                <div class="row mb-4">
+                <!-- Event Requests Table -->
+                <div class="row mb-4" th:if="${eventRequests != null && !eventRequests.isEmpty()}">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0">Approved Requests</h5>
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">Event Requests</h5>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Event ID</th>
                                                 <th>Event Name</th>
                                                 <th>Organizer</th>
                                                 <th>Date &amp; Time</th>
                                                 <th>Venue</th>
-                                                <th>Faculty Coordinator</th>
+                                                <th>Faculty</th>
+                                                <th>Status</th>
+                                                <th>Request Date</th>
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td>EVT-2023-003</td>
-                                                <td>Research Conference</td>
-                                                <td>Research Forum</td>
-                                                <td>15-Apr-2023, 09:00 AM</td>
-                                                <td>Conference Hall</td>
-                                                <td>Dr. Michael Brown</td>
+                                            <tr th:each="request : ${eventRequests}">
+                                                <td th:text="${request.event.name}">Event Name</td>
+                                                <td th:text="${request.event.organizer.clubName}">Organizer</td>
+                                                <td th:text="${#temporals.format(request.event.startDateTime, 'dd MMM yyyy, HH:mm')}">Date &amp; Time</td>
+                                                <td th:text="${request.event.venue}">Venue</td>
+                                                <td th:text="${request.event.faculty.name}">Faculty</td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-info">View</button>
-                                                    <button class="btn btn-sm btn-warning">Revoke</button>
+                                                    <span th:if="${request.status == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                                    <span th:if="${request.status == 'APPROVED'}" class="badge bg-success">Approved</span>
+                                                    <span th:if="${request.status == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                                                </td>
+                                                <td th:text="${#temporals.format(request.requestDate, 'dd MMM yyyy')}">Request Date</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="modal" th:data-bs-target="'#viewModal-' + ${request.id}">
+                                                        View
+                                                    </button>
+                                                    
+                                                    <!-- Only show approve/reject buttons for pending requests -->
+                                                    <div th:if="${request.status == 'PENDING'}" class="d-inline-block">
+                                                        <button class="btn btn-sm btn-success" data-bs-toggle="modal" th:data-bs-target="'#approveModal-' + ${request.id}">
+                                                            Approve
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" th:data-bs-target="'#rejectModal-' + ${request.id}">
+                                                            Reject
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -229,50 +199,145 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Rejected Requests -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header bg-danger text-white">
-                                <h5 class="mb-0">Rejected Requests</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th>Event ID</th>
-                                                <th>Event Name</th>
-                                                <th>Organizer</th>
-                                                <th>Date &amp; Time</th>
-                                                <th>Venue</th>
-                                                <th>Faculty Coordinator</th>
-                                                <th>Reason for Rejection</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>EVT-2023-004</td>
-                                                <td>Sports Meet</td>
-                                                <td>Sports Club</td>
-                                                <td>10-Apr-2023, 08:00 AM</td>
-                                                <td>Main Ground</td>
-                                                <td>Prof. Sarah Wilson</td>
-                                                <td>Conflicting with semester exams schedule</td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-info">View</button>
-                                                    <button class="btn btn-sm btn-success">Reconsider</button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Event Request Modals -->
+    <div th:each="request : ${eventRequests}" th:id="'viewModal-' + ${request.id}" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">View Event Request Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Event Details</h6>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Event Name</th>
+                                    <td th:text="${request.event.name}">Event Name</td>
+                                </tr>
+                                <tr>
+                                    <th>Description</th>
+                                    <td th:text="${request.event.description}">Description</td>
+                                </tr>
+                                <tr>
+                                    <th>Start Date/Time</th>
+                                    <td th:text="${#temporals.format(request.event.startDateTime, 'dd MMM yyyy, HH:mm')}">Start Date/Time</td>
+                                </tr>
+                                <tr>
+                                    <th>End Date/Time</th>
+                                    <td th:text="${#temporals.format(request.event.endDateTime, 'dd MMM yyyy, HH:mm')}">End Date/Time</td>
+                                </tr>
+                                <tr>
+                                    <th>Venue</th>
+                                    <td th:text="${request.event.venue}">Venue</td>
+                                </tr>
+                                <tr>
+                                    <th>Max Participants</th>
+                                    <td th:text="${request.event.maxParticipants}">Max Participants</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Request Details</h6>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Request ID</th>
+                                    <td th:text="${request.id}">Request ID</td>
+                                </tr>
+                                <tr>
+                                    <th>Organizer</th>
+                                    <td th:text="${request.event.organizer.clubName + ' (' + request.event.organizer.name + ')'}">Organizer</td>
+                                </tr>
+                                <tr>
+                                    <th>Faculty</th>
+                                    <td th:text="${request.event.faculty.name}">Faculty</td>
+                                </tr>
+                                <tr>
+                                    <th>Department</th>
+                                    <td th:text="${request.event.department}">Department</td>
+                                </tr>
+                                <tr>
+                                    <th>Request Date</th>
+                                    <td th:text="${#temporals.format(request.requestDate, 'dd MMM yyyy')}">Request Date</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        <span th:if="${request.status == 'PENDING'}" class="badge bg-warning">Pending</span>
+                                        <span th:if="${request.status == 'APPROVED'}" class="badge bg-success">Approved</span>
+                                        <span th:if="${request.status == 'REJECTED'}" class="badge bg-danger">Rejected</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${request.status != 'PENDING'}">
+                                    <th>Comments</th>
+                                    <td th:text="${request.comments}">Comments</td>
+                                </tr>
+                                <tr th:if="${request.status != 'PENDING'}">
+                                    <th>Response Date</th>
+                                    <td th:text="${#temporals.format(request.responseDate, 'dd MMM yyyy')}">Response Date</td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Approve Event Request Modals -->
+    <div th:each="request : ${eventRequests}" th:if="${request.status == 'PENDING'}" th:id="'approveModal-' + ${request.id}" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Approve Event Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/hod/event-requests/{id}/approve(id=${request.id})}" method="post">
+                    <div class="modal-body">
+                        <p>Are you sure you want to approve the event request for <strong th:text="${request.event.name}">Event Name</strong>?</p>
+                        <div class="mb-3">
+                            <label for="comments" class="form-label">Comments (Optional)</label>
+                            <textarea class="form-control" id="comments" name="comments" rows="3" placeholder="Enter any comments or instructions for the event organizer"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Approve Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Event Request Modals -->
+    <div th:each="request : ${eventRequests}" th:if="${request.status == 'PENDING'}" th:id="'rejectModal-' + ${request.id}" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reject Event Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/hod/event-requests/{id}/reject(id=${request.id})}" method="post">
+                    <div class="modal-body">
+                        <p>Are you sure you want to reject the event request for <strong th:text="${request.event.name}">Event Name</strong>?</p>
+                        <div class="mb-3">
+                            <label for="reason" class="form-label">Reason for Rejection <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="reason" name="reason" rows="3" placeholder="Enter the reason for rejecting this event request" required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Reject Request</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
