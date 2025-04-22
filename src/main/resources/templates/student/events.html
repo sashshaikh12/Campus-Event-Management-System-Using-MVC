@@ -99,34 +99,6 @@
                     <h1>Browse Approved Events</h1>
                 </div>
                 
-                <!-- Search and Filter Options -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <form class="row g-3" method="get">
-                            <div class="col-md-4">
-                                <label for="search" class="form-label">Search</label>
-                                <input type="text" class="form-control" id="search" name="search" th:value="${param.search}" placeholder="Event name, description...">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="department" class="form-label">Department</label>
-                                <select class="form-select" id="department" name="department">
-                                    <option value="">All Departments</option>
-                                    <option value="Computer Science" th:selected="${param.department == 'Computer Science'}">Computer Science</option>
-                                    <option value="Engineering" th:selected="${param.department == 'Engineering'}">Engineering</option>
-                                    <option value="Business" th:selected="${param.department == 'Business'}">Business</option>
-                                    <option value="Arts" th:selected="${param.department == 'Arts'}">Arts</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="date" class="form-label">Date</label>
-                                <input type="date" class="form-control" id="date" name="date" th:value="${param.date}">
-                            </div>
-                            <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">Filter</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
                 
                 <!-- Upcoming Events -->
                 <h4 class="mb-3">Upcoming Approved Events</h4>

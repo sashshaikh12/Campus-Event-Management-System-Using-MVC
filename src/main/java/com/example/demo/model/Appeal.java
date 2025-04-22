@@ -1,75 +1,196 @@
 package com.example.demo.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "appeals")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Appeal {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private User student;
+    @Column(name = "appeal_date", nullable = false)
+    private LocalDateTime appealDate;
     
-    @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+    @Column(name = "hod_comments")
+    private String hodComments;
     
     @Column(nullable = false)
     private String reason;
     
+    @Column(name = "response_date")
+    private LocalDateTime responseDate;
+    
+    @Column(nullable = false)
+    private String status;
+    
+    @Column(name = "student_id", nullable = false)
+    private String studentId;
+    
+    @Column(name = "hod_id")
+    private String hodId;
+    
     @Column(length = 2000)
     private String description;
     
-    @Column(nullable = false)
-    private String status; // PENDING, APPROVED, REJECTED, MORE_INFO_REQUESTED
-    
+    @Column(name = "hod_response")
     private String hodResponse;
     
-    @Column(nullable = false)
-    private LocalDateTime submissionTime;
+    @Column(name = "is_resolved", nullable = false)
+    private boolean isResolved;
     
+    @Column(name = "response_time")
     private LocalDateTime responseTime;
     
-    @Column(nullable = false)
-    private Boolean isResolved;
+    @Column(name = "submission_time", nullable = false)
+    private LocalDateTime submissionTime;
     
-    @PrePersist
-    protected void onCreate() {
-        submissionTime = LocalDateTime.now();
-        if (status == null) {
-            status = "PENDING";
-        }
-        isResolved = false;
+    @Column(name = "event_id")
+    private String eventId;
+    
+    public Appeal() {
+        this.appealDate = LocalDateTime.now();
+        this.submissionTime = LocalDateTime.now();
+        this.status = "PENDING";
+        this.isResolved = false;
+    }
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getAppealDate() {
+        return appealDate;
+    }
+
+    public void setAppealDate(LocalDateTime appealDate) {
+        this.appealDate = appealDate;
+    }
+
+    public String getHodComments() {
+        return hodComments;
+    }
+
+    public void setHodComments(String hodComments) {
+        this.hodComments = hodComments;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public LocalDateTime getResponseDate() {
+        return responseDate;
+    }
+
+    public void setResponseDate(LocalDateTime responseDate) {
+        this.responseDate = responseDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
+
+    public String getHodId() {
+        return hodId;
+    }
+
+    public void setHodId(String hodId) {
+        this.hodId = hodId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getHodResponse() {
+        return hodResponse;
+    }
+
+    public void setHodResponse(String hodResponse) {
+        this.hodResponse = hodResponse;
+    }
+
+    public boolean isResolved() {
+        return isResolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        isResolved = resolved;
+    }
+
+    public LocalDateTime getResponseTime() {
+        return responseTime;
+    }
+
+    public void setResponseTime(LocalDateTime responseTime) {
+        this.responseTime = responseTime;
+    }
+
+    public LocalDateTime getSubmissionTime() {
+        return submissionTime;
+    }
+
+    public void setSubmissionTime(LocalDateTime submissionTime) {
+        this.submissionTime = submissionTime;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
     
-    public void approve(String response) {
+    /**
+     * Approve an appeal and set relevant fields
+     * @param comments Comments from HOD regarding approval
+     */
+    public void approve(String comments) {
         this.status = "APPROVED";
-        this.hodResponse = response;
+        this.hodResponse = comments;
         this.responseTime = LocalDateTime.now();
+        this.responseDate = LocalDateTime.now();
         this.isResolved = true;
     }
     
-    public void reject(String response) {
+    /**
+     * Reject an appeal and set relevant fields
+     * @param reason Reason for rejection from HOD
+     */
+    public void reject(String reason) {
         this.status = "REJECTED";
-        this.hodResponse = response;
+        this.hodResponse = reason;
         this.responseTime = LocalDateTime.now();
+        this.responseDate = LocalDateTime.now();
         this.isResolved = true;
     }
-    
-    public void requestMoreInfo(String response) {
-        this.status = "MORE_INFO_REQUESTED";
-        this.hodResponse = response;
-        this.responseTime = LocalDateTime.now();
-    }
-} 
+}

@@ -40,11 +40,11 @@ public class StudentService {
         }
         
         Appeal appeal = new Appeal();
-        appeal.setStudent(student);
+        appeal.setStudentId(student.getId());
+        appeal.setHodId(hod.getId());
         appeal.setReason(reason);
         appeal.setStatus("PENDING");
         appeal.setDescription("Appeal to remove blacklisting");
-        hod.addAppeal(appeal);
         
         return appeal;
     }
@@ -78,4 +78,4 @@ public class StudentService {
     public int getAbsenceCount(Student student) {
         return student.getAbsenceCount();
     }
-} 
+}

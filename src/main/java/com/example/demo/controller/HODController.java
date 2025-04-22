@@ -1,8 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.Appeal;
 import com.example.demo.model.EventRequest;
 import com.example.demo.model.HOD;
+import com.example.demo.model.command.ApproveAppealCommand;
+import com.example.demo.model.command.Command;
+import com.example.demo.model.command.RejectAppealCommand;
+import com.example.demo.model.service.AppealService;
 import com.example.demo.model.service.EventRequestService;
+import com.example.demo.repository.AppealRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +18,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +33,12 @@ public class HODController {
     
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private AppealService appealService;
+    
+    @Autowired
+    private AppealRepository appealRepository;
     
     // Using a fixed HOD ID for simplicity
     private HOD getCurrentHOD() {
@@ -148,26 +162,127 @@ public class HODController {
     }
 
     @GetMapping("/appeals")
-    public String appeals() {
-        return "hod/appeals";
+    public String appeals(Model model) {
+        try {
+            HOD hod = getCurrentHOD();
+            
+            // Get appeals for this HOD
+            List<Appeal> pendingAppeals = appealRepository.findByHodIdAndStatusOrderBySubmissionTimeAsc(hod.getId(), "PENDING");
+            List<Appeal> resolvedAppeals = appealRepository.findByHodIdAndIsResolvedOrderBySubmissionTimeDesc(hod.getId(), true);
+            
+            model.addAttribute("hod", hod);
+            model.addAttribute("pendingAppeals", pendingAppeals);
+            model.addAttribute("resolvedAppeals", resolvedAppeals);
+            model.addAttribute("pendingCount", pendingAppeals.size());
+            model.addAttribute("resolvedCount", resolvedAppeals.size());
+            
+            return "hod/appeals";
+        } catch (Exception e) {
+            System.err.println("Error in appeals: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "An error occurred while loading appeals");
+            return "error";
+        }
     }
     
     @PostMapping("/appeals/{id}/approve")
-    public String approveAppeal(@PathVariable("id") Long id, @RequestParam(value = "response", required = false) String response) {
-        // Will implement the actual approval logic later
-        return "redirect:/hod/appeals";
+    public String approveAppeal(@PathVariable("id") Long id, 
+                               @RequestParam(value = "response", required = false) String response, 
+                               RedirectAttributes redirectAttributes) {
+        try {
+            if (response == null || response.trim().isEmpty()) {
+                response = "Your appeal has been approved.";
+            }
+            
+            // Get the appeal by ID
+            Optional<Appeal> appealOpt = appealRepository.findById(id);
+            if (appealOpt.isPresent()) {
+                Appeal appeal = appealOpt.get();
+                
+                // Use command pattern to approve the appeal
+                Command approveCommand = new ApproveAppealCommand(appeal, response);
+                approveCommand.execute();
+                
+                // Save the updated appeal
+                appealRepository.save(appeal);
+                
+                redirectAttributes.addFlashAttribute("successMessage", "Appeal was successfully approved.");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Appeal not found with ID: " + id);
+            }
+            
+            return "redirect:/hod/appeals";
+        } catch (Exception e) {
+            System.err.println("Error in approveAppeal: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while approving the appeal.");
+            return "redirect:/hod/appeals";
+        }
     }
     
     @PostMapping("/appeals/{id}/reject")
-    public String rejectAppeal(@PathVariable("id") Long id, @RequestParam("reason") String reason) {
-        // Will implement the actual rejection logic later
-        return "redirect:/hod/appeals";
+    public String rejectAppeal(@PathVariable("id") Long id, 
+                              @RequestParam("reason") String reason, 
+                              RedirectAttributes redirectAttributes) {
+        try {
+            // Get the appeal by ID
+            Optional<Appeal> appealOpt = appealRepository.findById(id);
+            if (appealOpt.isPresent()) {
+                Appeal appeal = appealOpt.get();
+                
+                // Use command pattern to reject the appeal
+                Command rejectCommand = new RejectAppealCommand(appeal, reason);
+                rejectCommand.execute();
+                
+                // Save the updated appeal
+                appealRepository.save(appeal);
+                
+                redirectAttributes.addFlashAttribute("successMessage", "Appeal was successfully rejected.");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Appeal not found with ID: " + id);
+            }
+            
+            return "redirect:/hod/appeals";
+        } catch (Exception e) {
+            System.err.println("Error in rejectAppeal: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred while rejecting the appeal.");
+            return "redirect:/hod/appeals";
+        }
     }
     
     @PostMapping("/appeals/{id}/request-info")
-    public String requestMoreInfo(@PathVariable("id") Long id, @RequestParam("message") String message) {
-        // Will implement the actual request for more info logic later
-        return "redirect:/hod/appeals";
+    public String requestMoreInfo(@PathVariable("id") Long id, 
+                                 @RequestParam("message") String message, 
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            // Get the appeal by ID
+            Optional<Appeal> appealOpt = appealRepository.findById(id);
+            if (appealOpt.isPresent()) {
+                Appeal appeal = appealOpt.get();
+                
+                // Update the appeal with the request for more info
+                appeal.setHodComments(message);
+                appeal.setStatus("INFO_REQUESTED");
+                appeal.setResponseDate(LocalDateTime.now());
+                
+                // Save the updated appeal
+                appealRepository.save(appeal);
+                
+                redirectAttributes.addFlashAttribute("successMessage", 
+                    "Request for additional information has been sent to the student.");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Appeal not found with ID: " + id);
+            }
+            
+            return "redirect:/hod/appeals";
+        } catch (Exception e) {
+            System.err.println("Error in requestMoreInfo: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                "An error occurred while requesting additional information.");
+            return "redirect:/hod/appeals";
+        }
     }
     
     @GetMapping("/profile")
@@ -183,4 +298,4 @@ public class HODController {
             return "error";
         }
     }
-} 
+}
