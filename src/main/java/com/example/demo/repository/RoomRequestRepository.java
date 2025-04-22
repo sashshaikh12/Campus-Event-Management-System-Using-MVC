@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface RoomRequestRepository extends JpaRepository<RoomRequest, String> {
     List<RoomRequest> findByRequestedBy_Id(String clubHeadId);
+    List<RoomRequest> findByStatus(String status);
 }
