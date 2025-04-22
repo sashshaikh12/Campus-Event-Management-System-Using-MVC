@@ -102,23 +102,23 @@
                 <!-- Search and Filter -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form class="row g-3">
+                        <form class="row g-3" method="get" action="/student/events">
                             <div class="col-md-4">
                                 <label for="searchQuery" class="form-label">Search Events</label>
-                                <input type="text" class="form-control" id="searchQuery" placeholder="Enter event name, organizer...">
+                                <input type="text" class="form-control" id="searchQuery" name="search" placeholder="Enter event name, organizer...">
                             </div>
                             <div class="col-md-3">
-                                <label for="clubFilter" class="form-label">Club/Organizer</label>
-                                <select id="clubFilter" class="form-select">
-                                    <option value="all" selected>All Clubs</option>
-                                    <option value="tech">Tech Club</option>
-                                    <option value="cs">CS Club</option>
-                                    <option value="research">Research Club</option>
+                                <label for="clubFilter" class="form-label">Department</label>
+                                <select id="clubFilter" class="form-select" name="department">
+                                    <option value="all" selected>All Departments</option>
+                                    <option value="Computer Science">Computer Science</option>
+                                    <option value="Fine Arts">Fine Arts</option>
+                                    <option value="Research">Research</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
                                 <label for="dateFilter" class="form-label">Date</label>
-                                <input type="date" class="form-control" id="dateFilter">
+                                <input type="date" class="form-control" id="dateFilter" name="date">
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
                                 <button type="submit" class="btn btn-primary w-100">Search</button>
@@ -130,86 +130,39 @@
                 <!-- Upcoming Events -->
                 <h4 class="mb-3">Upcoming Events</h4>
                 
+                <div th:if="${events.isEmpty()}" class="alert alert-info">
+                    <p class="mb-0">No events found matching your criteria. Try adjusting your search filters.</p>
+                </div>
+                
                 <div class="row">
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-6 mb-4" th:each="event : ${events}">
                         <div class="card event-card">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">Tech Conference 2023</h5>
-                                    <span class="badge bg-primary">Tech Club</span>
+                                    <h5 class="card-title" th:text="${event.name}">Event Name</h5>
+                                    <span class="badge bg-primary" th:text="${event.organizer.clubName}">Club Name</span>
                                 </div>
-                                <p class="card-text text-muted">15 Dec 2023, 10:00 AM - 2:00 PM</p>
-                                <p class="card-text">Venue: Main Auditorium</p>
-                                <p class="card-text"><small class="text-muted">Available Slots: 45/100</small></p>
-                                <p class="card-text">A conference focusing on emerging technologies and their applications...</p>
+                                <p class="card-text text-muted" th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy, HH:mm')} + ' - ' + ${#temporals.format(event.endDateTime, 'HH:mm')}">Date/Time</p>
+                                <p class="card-text">Venue: <span th:text="${event.venue}">Venue</span></p>
+                                <p class="card-text"><small class="text-muted">Available Slots: <span th:text="${event.maxParticipants - event.registeredStudents.size()} + '/' + ${event.maxParticipants}">Slots</span></small></p>
+                                <p class="card-text" th:text="${#strings.abbreviate(event.description, 100)}">Description</p>
                                 <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <a href="#" class="btn btn-outline-primary">View Details</a>
-                                    <a href="#" class="btn btn-success">Register Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6 mb-4">
-                        <div class="card event-card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">Programming Contest</h5>
-                                    <span class="badge bg-primary">CS Club</span>
-                                </div>
-                                <p class="card-text text-muted">20 Dec 2023, 2:00 PM - 6:00 PM</p>
-                                <p class="card-text">Venue: Computer Lab</p>
-                                <p class="card-text"><small class="text-muted">Available Slots: 25/50</small></p>
-                                <p class="card-text">Competitive programming contest with exciting prizes...</p>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <a href="#" class="btn btn-outline-primary">View Details</a>
-                                    <a href="#" class="btn btn-success">Register Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6 mb-4">
-                        <div class="card event-card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">Cultural Fest</h5>
-                                    <span class="badge bg-primary">Fine Arts Club</span>
-                                </div>
-                                <p class="card-text text-muted">25 Dec 2023, 5:00 PM - 9:00 PM</p>
-                                <p class="card-text">Venue: Open Air Theatre</p>
-                                <p class="card-text"><small class="text-muted">Available Slots: 45/100</small></p>
-                                <p class="card-text">Annual cultural festival featuring music, dance, and drama performances...</p>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <a href="#" class="btn btn-outline-primary">View Details</a>
-                                    <a href="#" class="btn btn-success">Register Now</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6 mb-4">
-                        <div class="card event-card">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">Research Symposium</h5>
-                                    <span class="badge bg-primary">Research Club</span>
-                                </div>
-                                <p class="card-text text-muted">10 Jan 2024, 9:00 AM - 5:00 PM</p>
-                                <p class="card-text">Venue: Conference Hall</p>
-                                <p class="card-text"><small class="text-muted">Available Slots: 25/50</small></p>
-                                <p class="card-text">Annual research symposium showcasing student research projects...</p>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <a href="#" class="btn btn-outline-primary">View Details</a>
-                                    <a href="#" class="btn btn-success">Register Now</a>
+                                    <button class="btn btn-outline-primary">View Details</button>
+                                    <form th:if="${!student.registeredEvents.contains(event) && !student.isBlacklisted()}" 
+                                          th:action="@{/student/events/{id}/register(id=${event.id})}" 
+                                          method="post">
+                                        <button type="submit" class="btn btn-success">Register Now</button>
+                                    </form>
+                                    <span th:if="${student.registeredEvents.contains(event)}" class="badge bg-success p-2">Registered</span>
+                                    <span th:if="${student.isBlacklisted() && !student.registeredEvents.contains(event)}" class="badge bg-danger p-2">Blacklisted</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Pagination -->
-                <nav aria-label="Page navigation">
+                <!-- Pagination (can be implemented later if needed) -->
+                <nav aria-label="Page navigation" th:if="${events.size() > 10}">
                     <ul class="pagination justify-content-center">
                         <li class="page-item disabled">
                             <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>

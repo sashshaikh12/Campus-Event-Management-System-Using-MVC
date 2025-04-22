@@ -99,9 +99,10 @@
             <!-- Main Content -->
             <div class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Welcome, Student</h1>
+                    <h1>Welcome, <span th:text="${student.name}">Student</span></h1>
                     <div class="status-indicator">
-                        <span class="badge bg-success p-2">Account Active</span>
+                        <span class="badge bg-success p-2" th:if="${!student.isBlacklisted()}">Account Active</span>
+                        <span class="badge bg-danger p-2" th:if="${student.isBlacklisted()}">Blacklisted</span>
                     </div>
                 </div>
                 
@@ -110,7 +111,7 @@
                         <div class="card dashboard-card shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title">Registered Events</h5>
-                                <p class="card-text fs-1 fw-bold text-primary">3</p>
+                                <p class="card-text fs-1 fw-bold text-primary" th:text="${registeredEventsCount}">3</p>
                                 <a href="/student/events/registered" class="btn btn-sm btn-outline-primary">View Events</a>
                             </div>
                         </div>
@@ -119,7 +120,7 @@
                         <div class="card dashboard-card shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title">Upcoming Events</h5>
-                                <p class="card-text fs-1 fw-bold text-info">8</p>
+                                <p class="card-text fs-1 fw-bold text-info" th:text="${upcomingEventsCount}">8</p>
                                 <a href="/student/events" class="btn btn-sm btn-outline-info">Browse Events</a>
                             </div>
                         </div>
@@ -128,7 +129,7 @@
                         <div class="card dashboard-card shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title">Attended Events</h5>
-                                <p class="card-text fs-1 fw-bold text-success">5</p>
+                                <p class="card-text fs-1 fw-bold text-success" th:text="${attendedEventsCount}">5</p>
                                 <a href="/student/events/registered" class="btn btn-sm btn-outline-success">View History</a>
                             </div>
                         </div>
@@ -136,9 +137,9 @@
                 </div>
                 
                 <!-- Warning Card (only shown if needed) -->
-                <div class="alert alert-warning mb-4">
+                <div class="alert alert-warning mb-4" th:if="${showAbsenceWarning}">
                     <h5 class="alert-heading">Warning: Absence Count</h5>
-                    <p>You have missed <strong>2</strong> events you registered for. If you miss one more event, you will be blacklisted from registering for future events.</p>
+                    <p>You have missed <strong th:text="${absenceCount}">2</strong> events you registered for. If you miss one more event, you will be blacklisted from registering for future events.</p>
                     <hr>
                     <p class="mb-0">Please ensure you attend events you register for or cancel your registration in advance.</p>
                 </div>
@@ -150,13 +151,13 @@
                         <a href="/student/events/registered" class="btn btn-sm btn-outline-primary">View All</a>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+                        <div class="row" th:if="${!upcomingStudentEvents.isEmpty()}">
+                            <div class="col-md-6 mb-3" th:each="event : ${upcomingStudentEvents}">
                                 <div class="card event-card">
                                     <div class="card-body">
-                                        <h5 class="card-title">Tech Conference 2023</h5>
-                                        <p class="card-text text-muted">15 Dec 2023, 10:00 AM</p>
-                                        <p class="card-text">Venue: Main Auditorium</p>
+                                        <h5 class="card-title" th:text="${event.name}">Event Name</h5>
+                                        <p class="card-text text-muted" th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy, HH:mm a')}">Date Time</p>
+                                        <p class="card-text">Venue: <span th:text="${event.venue}">Venue</span></p>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span class="badge bg-success">Registered</span>
                                             <a href="#" class="btn btn-sm btn-outline-danger">Cancel Registration</a>
@@ -164,19 +165,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <div class="card event-card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Programming Contest</h5>
-                                        <p class="card-text text-muted">20 Dec 2023, 2:00 PM</p>
-                                        <p class="card-text">Venue: Computer Lab</p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-success">Registered</span>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Cancel Registration</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="text-center p-3" th:if="${upcomingStudentEvents.isEmpty()}">
+                            <p>You don't have any upcoming events. <a href="/student/events">Browse events</a> to register.</p>
                         </div>
                     </div>
                 </div>
@@ -188,7 +179,7 @@
                         <a href="/student/events" class="btn btn-sm btn-outline-primary">Browse More</a>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div class="table-responsive" th:if="${!popularEvents.isEmpty()}">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -200,26 +191,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Cultural Fest</td>
-                                        <td>25 Dec 2023</td>
-                                        <td>Fine Arts Club</td>
-                                        <td>45/100</td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Research Symposium</td>
-                                        <td>10 Jan 2024</td>
-                                        <td>Research Club</td>
-                                        <td>25/50</td>
+                                    <tr th:each="event : ${popularEvents}">
+                                        <td th:text="${event.name}">Event Name</td>
+                                        <td th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy')}">Date</td>
+                                        <td th:text="${event.organizer.clubName}">Organizer</td>
+                                        <td th:text="${event.maxParticipants - event.registeredStudents.size()} + '/' + ${event.maxParticipants}">Spots</td>
                                         <td>
                                             <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="text-center p-3" th:if="${popularEvents.isEmpty()}">
+                            <p>No events are currently available. Please check back later.</p>
                         </div>
                     </div>
                 </div>
