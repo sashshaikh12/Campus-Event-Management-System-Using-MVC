@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Events - Campus Event Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background-color: #212529;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0dcaf0;
+        }
+        .event-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            border-left: 4px solid #0dcaf0;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Campus Event Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 mb-4">
+                <div class="sidebar">
+                    <h5 class="p-3 mb-3 border-bottom">Student Menu</h5>
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item">
+                            <a href="/student/dashboard" class="nav-link">Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="/student/events" class="nav-link active">Browse Events</a>
+                        </li>
+                        <li>
+                            <a href="/student/events/registered" class="nav-link">My Registrations</a>
+                        </li>
+                        <li>
+                            <a href="/student/appeals" class="nav-link">My Appeals</a>
+                        </li>
+                        <li>
+                            <a href="/student/profile" class="nav-link">Profile</a>
+                        </li>
+                        <li>
+                            <a href="/" class="nav-link text-danger">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Browse Events</h1>
+                </div>
+                
+                <!-- Search and Filter -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <form class="row g-3">
+                            <div class="col-md-4">
+                                <label for="searchQuery" class="form-label">Search Events</label>
+                                <input type="text" class="form-control" id="searchQuery" placeholder="Enter event name, organizer...">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="clubFilter" class="form-label">Club/Organizer</label>
+                                <select id="clubFilter" class="form-select">
+                                    <option value="all" selected>All Clubs</option>
+                                    <option value="tech">Tech Club</option>
+                                    <option value="cs">CS Club</option>
+                                    <option value="research">Research Club</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="dateFilter" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="dateFilter">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Upcoming Events -->
+                <h4 class="mb-3">Upcoming Events</h4>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card event-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">Tech Conference 2023</h5>
+                                    <span class="badge bg-primary">Tech Club</span>
+                                </div>
+                                <p class="card-text text-muted">15 Dec 2023, 10:00 AM - 2:00 PM</p>
+                                <p class="card-text">Venue: Main Auditorium</p>
+                                <p class="card-text"><small class="text-muted">Available Slots: 45/100</small></p>
+                                <p class="card-text">A conference focusing on emerging technologies and their applications...</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="#" class="btn btn-outline-primary">View Details</a>
+                                    <a href="#" class="btn btn-success">Register Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card event-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">Programming Contest</h5>
+                                    <span class="badge bg-primary">CS Club</span>
+                                </div>
+                                <p class="card-text text-muted">20 Dec 2023, 2:00 PM - 6:00 PM</p>
+                                <p class="card-text">Venue: Computer Lab</p>
+                                <p class="card-text"><small class="text-muted">Available Slots: 25/50</small></p>
+                                <p class="card-text">Competitive programming contest with exciting prizes...</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="#" class="btn btn-outline-primary">View Details</a>
+                                    <a href="#" class="btn btn-success">Register Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card event-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">Cultural Fest</h5>
+                                    <span class="badge bg-primary">Fine Arts Club</span>
+                                </div>
+                                <p class="card-text text-muted">25 Dec 2023, 5:00 PM - 9:00 PM</p>
+                                <p class="card-text">Venue: Open Air Theatre</p>
+                                <p class="card-text"><small class="text-muted">Available Slots: 45/100</small></p>
+                                <p class="card-text">Annual cultural festival featuring music, dance, and drama performances...</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="#" class="btn btn-outline-primary">View Details</a>
+                                    <a href="#" class="btn btn-success">Register Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-4">
+                        <div class="card event-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">Research Symposium</h5>
+                                    <span class="badge bg-primary">Research Club</span>
+                                </div>
+                                <p class="card-text text-muted">10 Jan 2024, 9:00 AM - 5:00 PM</p>
+                                <p class="card-text">Venue: Conference Hall</p>
+                                <p class="card-text"><small class="text-muted">Available Slots: 25/50</small></p>
+                                <p class="card-text">Annual research symposium showcasing student research projects...</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <a href="#" class="btn btn-outline-primary">View Details</a>
+                                    <a href="#" class="btn btn-success">Register Now</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Pagination -->
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
