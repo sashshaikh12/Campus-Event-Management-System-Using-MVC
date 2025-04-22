@@ -144,70 +144,7 @@
                     <p class="mb-0">Please ensure you attend events you register for or cancel your registration in advance.</p>
                 </div>
                 
-                <!-- Upcoming Events -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Your Upcoming Events</h5>
-                        <a href="/student/events/registered" class="btn btn-sm btn-outline-primary">View All</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="row" th:if="${!upcomingStudentEvents.isEmpty()}">
-                            <div class="col-md-6 mb-3" th:each="event : ${upcomingStudentEvents}">
-                                <div class="card event-card">
-                                    <div class="card-body">
-                                        <h5 class="card-title" th:text="${event.name}">Event Name</h5>
-                                        <p class="card-text text-muted" th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy, HH:mm a')}">Date Time</p>
-                                        <p class="card-text">Venue: <span th:text="${event.venue}">Venue</span></p>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="badge bg-success">Registered</span>
-                                            <a href="#" class="btn btn-sm btn-outline-danger">Cancel Registration</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-center p-3" th:if="${upcomingStudentEvents.isEmpty()}">
-                            <p>You don't have any upcoming events. <a href="/student/events">Browse events</a> to register.</p>
-                        </div>
-                    </div>
-                </div>
                 
-                <!-- Popular Events -->
-                <div class="card shadow-sm">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Popular Events</h5>
-                        <a href="/student/events" class="btn btn-sm btn-outline-primary">Browse More</a>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive" th:if="${!popularEvents.isEmpty()}">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Event Name</th>
-                                        <th>Date</th>
-                                        <th>Organizer</th>
-                                        <th>Available Spots</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="event : ${popularEvents}">
-                                        <td th:text="${event.name}">Event Name</td>
-                                        <td th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy')}">Date</td>
-                                        <td th:text="${event.organizer.clubName}">Organizer</td>
-                                        <td th:text="${event.maxParticipants - event.registeredStudents.size()} + '/' + ${event.maxParticipants}">Spots</td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-outline-primary">View Details</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="text-center p-3" th:if="${popularEvents.isEmpty()}">
-                            <p>No events are currently available. Please check back later.</p>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

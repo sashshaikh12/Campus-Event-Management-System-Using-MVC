@@ -17,16 +17,16 @@ public class Room {
     private String roomNumber;
     
     @Column(nullable = false)
-    private int capacity;
+    private Integer capacity;
     
     @Column(nullable = false)
     private String building;
     
     @Column(nullable = false)
-    private boolean hasProjector;
+    private Boolean hasProjector;
     
     @Column(nullable = false)
-    private boolean hasAirConditioner;
+    private Boolean hasAirConditioner;
     
     @ManyToOne
     @JoinColumn(name = "room_manager_id")

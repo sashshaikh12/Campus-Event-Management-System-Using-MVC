@@ -111,30 +111,8 @@
                     </div>
                 </div>
                 
-                <!-- Filters -->
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Filters</h5>
-                                <form class="row g-3" method="get" action="/hod/event-requests">
-                                    <div class="col-md-4">
-                                        <label for="statusFilter" class="form-label">Status</label>
-                                        <select id="statusFilter" name="status" class="form-select">
-                                            <option value="" th:selected="${selectedStatus == null}">All</option>
-                                            <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Pending</option>
-                                            <option value="APPROVED" th:selected="${selectedStatus == 'APPROVED'}">Approved</option>
-                                            <option value="REJECTED" th:selected="${selectedStatus == 'REJECTED'}">Rejected</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-4 d-flex align-items-end">
-                                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
+                
                 
                 <!-- Alert for no event requests -->
                 <div class="alert alert-info" th:if="${eventRequests == null || eventRequests.isEmpty()}">

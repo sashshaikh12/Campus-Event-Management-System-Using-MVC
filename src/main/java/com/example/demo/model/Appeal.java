@@ -42,7 +42,7 @@ public class Appeal {
     private LocalDateTime responseTime;
     
     @Column(nullable = false)
-    private boolean isResolved;
+    private Boolean isResolved;
     
     @PrePersist
     protected void onCreate() {

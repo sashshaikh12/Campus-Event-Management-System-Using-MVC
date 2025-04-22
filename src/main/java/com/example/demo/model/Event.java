@@ -29,7 +29,7 @@ public class Event {
     private String venue;
     
     @Column(nullable = false)
-    private int maxParticipants;
+    private Integer maxParticipants;
     
     @ManyToOne
     @JoinColumn(name = "organizer_id", nullable = false)

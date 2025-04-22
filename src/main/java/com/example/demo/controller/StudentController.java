@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/student")
@@ -84,15 +86,13 @@ public class StudentController {
     }
     
     @GetMapping("/events")
-    public String events(Model model, 
-                         @RequestParam(required = false) String search,
-                         @RequestParam(required = false) String department,
-                         @RequestParam(required = false) String date) {
+    public String events(Model model) {
         try {
             Student student = getCurrentStudent();
             
-            // Get all upcoming approved events
-            List<Event> events = eventService.getUpcomingApprovedEvents();
+            // Get all approved events (not just upcoming ones)
+            List<Event> events = eventService.getAllApprovedEvents();
+            System.out.println("Fetched " + events.size() + " approved events from database");
             
             // Add data to the model
             model.addAttribute("student", student);
@@ -184,4 +184,4 @@ public class StudentController {
             return "error";
         }
     }
-} 
+}

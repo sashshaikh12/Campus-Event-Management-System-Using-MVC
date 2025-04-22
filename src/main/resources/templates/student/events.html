@@ -96,42 +96,44 @@
             <!-- Main Content -->
             <div class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Browse Events</h1>
+                    <h1>Browse Approved Events</h1>
                 </div>
                 
-                <!-- Search and Filter -->
+                <!-- Search and Filter Options -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <form class="row g-3" method="get" action="/student/events">
+                        <form class="row g-3" method="get">
                             <div class="col-md-4">
-                                <label for="searchQuery" class="form-label">Search Events</label>
-                                <input type="text" class="form-control" id="searchQuery" name="search" placeholder="Enter event name, organizer...">
+                                <label for="search" class="form-label">Search</label>
+                                <input type="text" class="form-control" id="search" name="search" th:value="${param.search}" placeholder="Event name, description...">
                             </div>
                             <div class="col-md-3">
-                                <label for="clubFilter" class="form-label">Department</label>
-                                <select id="clubFilter" class="form-select" name="department">
-                                    <option value="all" selected>All Departments</option>
-                                    <option value="Computer Science">Computer Science</option>
-                                    <option value="Fine Arts">Fine Arts</option>
-                                    <option value="Research">Research</option>
+                                <label for="department" class="form-label">Department</label>
+                                <select class="form-select" id="department" name="department">
+                                    <option value="">All Departments</option>
+                                    <option value="Computer Science" th:selected="${param.department == 'Computer Science'}">Computer Science</option>
+                                    <option value="Engineering" th:selected="${param.department == 'Engineering'}">Engineering</option>
+                                    <option value="Business" th:selected="${param.department == 'Business'}">Business</option>
+                                    <option value="Arts" th:selected="${param.department == 'Arts'}">Arts</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <label for="dateFilter" class="form-label">Date</label>
-                                <input type="date" class="form-control" id="dateFilter" name="date">
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="date" name="date" th:value="${param.date}">
                             </div>
                             <div class="col-md-2 d-flex align-items-end">
-                                <button type="submit" class="btn btn-primary w-100">Search</button>
+                                <button type="submit" class="btn btn-primary w-100">Filter</button>
                             </div>
                         </form>
                     </div>
                 </div>
                 
                 <!-- Upcoming Events -->
-                <h4 class="mb-3">Upcoming Events</h4>
+                <h4 class="mb-3">Upcoming Approved Events</h4>
                 
-                <div th:if="${events.isEmpty()}" class="alert alert-info">
-                    <p class="mb-0">No events found matching your criteria. Try adjusting your search filters.</p>
+                <!-- No events message -->
+                <div th:if="${events == null || events.isEmpty()}" class="alert alert-info">
+                    <p class="mb-0">No approved events found matching your criteria. Try adjusting your search filters.</p>
                 </div>
                 
                 <div class="row">
