@@ -3,21 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Club Head Dashboard - Campus Event Management System</title>
+    <title>My Events - Club Head Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8f9fa;
-        }
-        .dashboard-card {
-            border-radius: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-bottom: 20px;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         .sidebar {
             background-color: #212529;
@@ -54,7 +45,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/clubhead/dashboard">Dashboard</a>
+                        <a class="nav-link" href="/clubhead/dashboard">Dashboard</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/">Logout</a>
@@ -72,10 +63,10 @@
                     <h5 class="p-3 mb-3 border-bottom">Club Head Menu</h5>
                     <ul class="nav nav-pills flex-column">
                         <li class="nav-item">
-                            <a href="/clubhead/dashboard" class="nav-link active">Dashboard</a>
+                            <a href="/clubhead/dashboard" class="nav-link">Dashboard</a>
                         </li>
                         <li>
-                            <a href="/clubhead/events" class="nav-link">My Events</a>
+                            <a href="/clubhead/events" class="nav-link active">My Events</a>
                         </li>
                         <li>
                             <a href="/clubhead/events/create" class="nav-link">Create Event</a>
@@ -93,47 +84,70 @@
             <!-- Main Content -->
             <div class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Welcome, Club Head!</h1>
+                    <h1>My Events</h1>
                     <a href="/clubhead/events/create" class="btn btn-primary">Create New Event</a>
                 </div>
                 
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="card dashboard-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Events</h5>
-                                <p class="card-text fs-1 fw-bold text-primary">0</p>
-                                <a href="/clubhead/events" class="btn btn-sm btn-outline-primary">View All Events</a>
+                <!-- Filter Options -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <select class="form-select">
+                                    <option selected>All Events</option>
+                                    <option>Pending Events</option>
+                                    <option>Approved Events</option>
+                                    <option>Rejected Events</option>
+                                </select>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card dashboard-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">Pending Approvals</h5>
-                                <p class="card-text fs-1 fw-bold text-warning">0</p>
-                                <a href="/clubhead/events" class="btn btn-sm btn-outline-warning">View Pending</a>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" placeholder="Search for events...">
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card dashboard-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">Approved Events</h5>
-                                <p class="card-text fs-1 fw-bold text-success">0</p>
-                                <a href="/clubhead/events" class="btn btn-sm btn-outline-success">View Approved</a>
+                            <div class="col-md-2">
+                                <button class="btn btn-outline-primary w-100">Filter</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="card shadow-sm">
+                <!-- Events Table -->
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Recent Events</h5>
+                        <h5 class="mb-0">Events List</h5>
                     </div>
                     <div class="card-body">
                         <div class="alert alert-info">
-                            You haven't created any events yet. <a href="/clubhead/events/create" class="alert-link">Create your first event</a>.
+                            You haven't created any events yet. Click "Create New Event" to get started.
+                        </div>
+                        
+                        <!-- Sample Event Table (Empty for Demo) -->
+                        <div class="table-responsive d-none">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Event Name</th>
+                                        <th>Date</th>
+                                        <th>Venue</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Sample data row (hidden) -->
+                                    <tr>
+                                        <td>Tech Conference 2023</td>
+                                        <td>15 Dec 2023</td>
+                                        <td>Main Auditorium</td>
+                                        <td><span class="badge bg-warning">PENDING</span></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="#" class="btn btn-outline-primary">View</a>
+                                                <a href="#" class="btn btn-outline-success">Request Room</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -143,4 +157,4 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
+</html> 

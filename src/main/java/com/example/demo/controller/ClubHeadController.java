@@ -12,4 +12,14 @@ public class ClubHeadController {
     public String dashboard() {
         return "clubhead/dashboard";
     }
+    
+    @GetMapping("/events")
+    public String events() {
+        return "clubhead/events";
+    }
+    
+    @GetMapping("/events/create")
+    public String createEvent() {
+        return "clubhead/create-event";
+    }
 } 
