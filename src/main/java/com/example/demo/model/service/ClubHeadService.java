@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -94,7 +95,22 @@ public class ClubHeadService {
      * Get all events created by a club head
      */
     public List<Event> getClubHeadEvents(ClubHead clubHead) {
-        return eventRepository.findByOrganizer(clubHead);
+        try {
+            if (clubHead == null || eventRepository == null) {
+                return new ArrayList<>();
+            }
+            
+            // First try to get events from the club head object directly
+            if (clubHead.getCreatedEvents() != null && !clubHead.getCreatedEvents().isEmpty()) {
+                return clubHead.getCreatedEvents();
+            }
+            
+            // If not available there, try the repository
+            return eventRepository.findByOrganizer(clubHead);
+        } catch (Exception e) {
+            System.err.println("Error fetching events for club head: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
     
     /**

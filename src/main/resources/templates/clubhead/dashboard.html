@@ -5,156 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club Head Dashboard - Campus Event Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-        }
-        .sidebar {
-            min-height: calc(100vh - 56px);
-            background-color: #212529;
-            color: white;
-        }
-        .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            border-radius: 0;
-        }
-        .sidebar .nav-link:hover {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        .sidebar .nav-link.active {
-            color: #fff;
-            background-color: #0d6efd;
-        }
-        .content {
-            padding: 20px;
-        }
-        .dashboard-card {
-            border-radius: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .dashboard-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Campus Event Management</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container-fluid">
+    <div class="container mt-5">
         <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 sidebar p-0">
-                <div class="d-flex flex-column p-3">
-                    <div th:replace="fragments/clubhead-sidebar :: sidebar"></div>
-                </div>
-            </div>
-            
-            <!-- Main Content -->
-            <div class="col-md-9 col-lg-10 content">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Welcome, <span th:text="${clubHead != null ? clubHead.name : 'Club Head'}"></span></h1>
-                    <a th:href="@{/clubhead/events/create}" class="btn btn-primary">Create New Event</a>
-                </div>
-                
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="card dashboard-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">Total Events</h5>
-                                <p class="card-text fs-1 fw-bold text-primary" th:text="${events != null ? events.size() : '0'}">0</p>
-                                <a th:href="@{/clubhead/events}" class="btn btn-sm btn-outline-primary">View All Events</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card dashboard-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">Pending Approvals</h5>
-                                <p class="card-text fs-1 fw-bold text-warning" th:text="${events != null ? #lists.size(#arrays.asList(events.?[status == 'PENDING'])) : '0'}">0</p>
-                                <a th:href="@{/clubhead/events}" class="btn btn-sm btn-outline-warning">View Pending</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card dashboard-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title">Approved Events</h5>
-                                <p class="card-text fs-1 fw-bold text-success" th:text="${events != null ? #lists.size(#arrays.asList(events.?[status == 'APPROVED'])) : '0'}">0</p>
-                                <a th:href="@{/clubhead/events}" class="btn btn-sm btn-outline-success">View Approved</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card shadow-sm">
-                    <div class="card-header">
-                        <h5 class="mb-0">Recent Events</h5>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Club Head Dashboard</h4>
                     </div>
                     <div class="card-body">
-                        <div th:if="${events == null || events.empty}" class="alert alert-info">
-                            You haven't created any events yet. <a th:href="@{/clubhead/events/create}" class="alert-link">Create your first event</a>.
+                        <div class="alert alert-success">
+                            <p>Welcome to the Club Head Dashboard!</p>
+                            <p>This is a placeholder dashboard for demo purposes.</p>
                         </div>
-                        <div th:if="${events != null && !events.empty}" class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Event Name</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="event : ${events}">
-                                        <td th:text="${event.name}">Event Name</td>
-                                        <td th:text="${#temporals.format(event.startDateTime, 'dd MMM yyyy')}">01 Jan 2023</td>
-                                        <td>
-                                            <span th:class="${'badge ' + 
-                                                (event.status == 'APPROVED' ? 'bg-success' : 
-                                                (event.status == 'PENDING' ? 'bg-warning' : 
-                                                (event.status == 'REJECTED' ? 'bg-danger' : 'bg-secondary')))}"
-                                                th:text="${event.status}">Status</span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group">
-                                                <a th:if="${event.status == 'APPROVED'}" th:href="@{/clubhead/room-request/{id}(id=${event.id})}" class="btn btn-sm btn-outline-primary">Room Request</a>
-                                                <a th:if="${event.status == 'APPROVED'}" th:href="@{/clubhead/notify-students/{id}(id=${event.id})}" class="btn btn-sm btn-outline-info">Notify Students</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="d-flex justify-content-between">
+                            <a href="/" class="btn btn-outline-primary">Back to Home</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,3 @@
+@echo off
+echo Starting the Campus Event Management System...
+mvn spring-boot:run -Dspring-boot.run.arguments="--logging.level.org.springframework.security=DEBUG --logging.level.org.hibernate.SQL=DEBUG" 
