@@ -5,6 +5,7 @@ import com.example.demo.model.Event;
 import com.example.demo.model.EventRequest;
 import com.example.demo.model.Faculty;
 import com.example.demo.model.Student;
+import com.example.demo.model.factory.EventFactory;
 import com.example.demo.repository.EventRepository;
 import com.example.demo.repository.EventRequestRepository;
 import com.example.demo.repository.UserRepository;
@@ -86,32 +87,51 @@ public class EventService {
             Faculty faculty = facultyOpt.get();
             
             // Create the Event
-            Event event = new Event();
-            event.setName(name);
-            event.setDescription(description);
-            event.setStartDateTime(startDateTime);
-            event.setEndDateTime(endDateTime);
-            event.setVenue(venue);
-            event.setMaxParticipants(maxParticipants);
-            event.setOrganizer(clubHead);
-            event.setFaculty(faculty);
-            event.setDepartment(faculty.getDepartment());
-            event.setStatus("PENDING");
-            event.setCreatedAt(LocalDateTime.now());
+            // Event event = new Event();
+            // event.setName(name);
+            // event.setDescription(description);
+            // event.setStartDateTime(startDateTime);
+            // event.setEndDateTime(endDateTime);
+            // event.setVenue(venue);
+            // event.setMaxParticipants(maxParticipants);
+            // event.setOrganizer(clubHead);
+            // event.setFaculty(faculty);
+            // event.setDepartment(faculty.getDepartment());
+            // event.setStatus("PENDING");
+            // event.setCreatedAt(LocalDateTime.now());
+
+            Event event = EventFactory.createEvent(
+                name, description, startDateTime, endDateTime,
+                venue, maxParticipants, clubHead, faculty
+            );
             
-            // Save the event
-            Event savedEvent = eventRepository.save(event);
+            // // Save the event
+            // Event savedEvent = eventRepository.save(event);
             
             // Create an event request
-            EventRequest eventRequest = new EventRequest();
-            eventRequest.setEvent(savedEvent);
-            eventRequest.setStatus("PENDING");
-            eventRequest.setRequestDate(LocalDateTime.now());
+            // EventRequest eventRequest = new EventRequest();
+            // eventRequest.setEvent(savedEvent);
+            // eventRequest.setStatus("PENDING");
+            // eventRequest.setRequestDate(LocalDateTime.now());
+
+            // Set additional properties
+            event.setStatus("PENDING");
+            event.setCreatedAt(LocalDateTime.now());
+            event.setDepartment(clubHead.getDepartment());
+                        
+            // // Save the event request
+            // eventRequestRepository.save(eventRequest);
             
-            // Save the event request
-            eventRequestRepository.save(eventRequest);
-            
-            return savedEvent;
+            // return savedEvent;
+
+            // Save to repository
+            eventRepository.save(event);
+
+            // Create EventRequest using factory
+            EventRequest request = EventFactory.createEventRequest(event);
+            eventRequestRepository.save(request);
+
+            return event;
         } catch (Exception e) {
             throw new RuntimeException("Failed to create event: " + e.getMessage(), e);
         }

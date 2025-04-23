@@ -11,6 +11,7 @@ import com.example.demo.model.RoomManager;
 import com.example.demo.model.factory.EventCreator;
 import com.example.demo.model.factory.EventFactory;
 import com.example.demo.repository.EventRepository;
+import com.example.demo.repository.EventRequestRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class ClubHeadService {
     
     @Autowired
     private RoomRepository roomRepository;
+    
+    @Autowired
+    private EventRequestRepository eventRequestRepository;
     
     @Autowired
     @Qualifier("standardEventCreator") // Specifying which implementation to inject
@@ -72,16 +76,29 @@ public class ClubHeadService {
     public Event createWorkshopEvent(ClubHead clubHead, String name, String description, LocalDateTime startDateTime, 
                                     LocalDateTime endDateTime, String venue, int maxParticipants, Faculty faculty) {
         
-        // Using the workshop factory to create the specialized event
-        Event workshopEvent = workshopEventCreator.createEvent(name, description, startDateTime, endDateTime, 
-                                                              venue, maxParticipants, clubHead, faculty);
+        // Prepend "Workshop:" to name for special treatment
+        String workshopName = "Workshop: " + name;
         
-        // Add the workshop event to the club head's list of events
-        clubHead.addEvent(workshopEvent);
+        // Use factory to create the event
+        Event event = EventFactory.createEvent(
+            workshopName, description, startDateTime, endDateTime,
+            venue, maxParticipants, clubHead, faculty
+        );
         
-        // Save to database
-        userRepository.save(clubHead);
-        return eventRepository.save(workshopEvent);
+        // Additional workshop-specific setup
+        event.setStatus("PENDING");
+        event.setCreatedAt(LocalDateTime.now());
+        event.setDepartment(clubHead.getDepartment());
+        // Maybe add workshop tags or properties
+        
+        // Save event
+        eventRepository.save(event);
+        
+        // Create and save request
+        EventRequest request = EventFactory.createEventRequest(event);
+        eventRequestRepository.save(request);
+        
+        return event;
     }
     
     /**
