@@ -8,11 +8,13 @@ import com.example.demo.model.HOD;
 import com.example.demo.model.Room;
 import com.example.demo.model.RoomRequest;
 import com.example.demo.model.RoomManager;
+import com.example.demo.model.factory.EventCreator;
 import com.example.demo.model.factory.EventFactory;
 import com.example.demo.repository.EventRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,14 @@ public class ClubHeadService {
     @Autowired
     private RoomRepository roomRepository;
     
+    @Autowired
+    @Qualifier("standardEventCreator") // Specifying which implementation to inject
+    private EventCreator eventCreator;
+    
+    @Autowired
+    @Qualifier("workshopEventCreator") // Specifying workshop event creator
+    private EventCreator workshopEventCreator;
+    
     /**
      * Create a new event and add it to the club head's list of events
      */
@@ -44,7 +54,7 @@ public class ClubHeadService {
                             LocalDateTime endDateTime, String venue, int maxParticipants, Faculty faculty) {
         
         // Using the factory to create the event - Factory pattern
-        Event event = EventFactory.createEvent(name, description, startDateTime, endDateTime, 
+        Event event = eventCreator.createEvent(name, description, startDateTime, endDateTime, 
                                               venue, maxParticipants, clubHead, faculty);
         
         // Add the event to the club head's list - Creator pattern (GRASP)
@@ -53,6 +63,25 @@ public class ClubHeadService {
         // Save the updated clubhead and event to the database
         userRepository.save(clubHead);
         return eventRepository.save(event);
+    }
+    
+    /**
+     * Create a new workshop event with specific workshop configuration
+     */
+    @Transactional
+    public Event createWorkshopEvent(ClubHead clubHead, String name, String description, LocalDateTime startDateTime, 
+                                    LocalDateTime endDateTime, String venue, int maxParticipants, Faculty faculty) {
+        
+        // Using the workshop factory to create the specialized event
+        Event workshopEvent = workshopEventCreator.createEvent(name, description, startDateTime, endDateTime, 
+                                                              venue, maxParticipants, clubHead, faculty);
+        
+        // Add the workshop event to the club head's list of events
+        clubHead.addEvent(workshopEvent);
+        
+        // Save to database
+        userRepository.save(clubHead);
+        return eventRepository.save(workshopEvent);
     }
     
     /**
@@ -121,4 +150,4 @@ public class ClubHeadService {
         // Notification logic here
         // This could send emails, push notifications, etc.
     }
-} 
+}
