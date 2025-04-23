@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Workshop - Club Head Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background-color: #212529;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .sidebar .nav-link.active {
+            color: #fff;
+            background-color: #0d6efd;
+        }
+        .workshop-badge {
+            background-color: #6f42c1;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.25rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Campus Event Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/clubhead/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 mb-4">
+                <div class="sidebar">
+                    <h5 class="p-3 mb-3 border-bottom" th:text="${clubHead.clubName}">Club Head Menu</h5>
+                    <ul class="nav nav-pills flex-column">
+                        <li class="nav-item">
+                            <a href="/clubhead/dashboard" class="nav-link">Dashboard</a>
+                        </li>
+                        <li>
+                            <a href="/clubhead/events" class="nav-link">My Events</a>
+                        </li>
+                        <li>
+                            <a href="/clubhead/events/create" class="nav-link">Create Event</a>
+                        </li>
+                        <li>
+                            <a href="/clubhead/events/create-workshop" class="nav-link active">Create Workshop</a>
+                        </li>
+                        <li>
+                            <a href="/clubhead/room-requests" class="nav-link">Room Requests</a>
+                        </li>
+                        <li>
+                            <a href="/clubhead/profile" class="nav-link">Profile</a>
+                        </li>
+                        <li>
+                            <a href="/logout" class="nav-link text-danger">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>Create New Workshop</h1>
+                    <a href="/clubhead/events" class="btn btn-outline-secondary">Back to Events</a>
+                </div>
+                
+                <div class="workshop-badge">
+                    <i class="fas fa-tools me-2"></i> Workshop Event
+                </div>
+                
+                <!-- Alert messages -->
+                <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+                    <span th:text="${successMessage}">Success message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
+                    <span th:text="${errorMessage}">Error message</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> Workshops are hands-on learning events with a maximum of 30 participants. 
+                    The system will automatically format your workshop with the appropriate template.
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <form action="/clubhead/events/create-workshop" method="post">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Workshop Title*</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter workshop title" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Workshop Details*</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" 
+                                    placeholder="Include what participants will learn and any materials they need to bring" required></textarea>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="startDateTime" class="form-label">Start Date & Time*</label>
+                                    <input type="text" class="form-control date-time-picker" id="startDateTime" name="startDateTime" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDateTime" class="form-label">End Date & Time*</label>
+                                    <input type="text" class="form-control date-time-picker" id="endDateTime" name="endDateTime" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="venue" class="form-label">Venue*</label>
+                                <input type="text" class="form-control" id="venue" name="venue" required>
+                                <div class="form-text">For workshops, it's important to specify the venue requirements, like tables, power outlets, etc.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="maxParticipants" class="form-label">Maximum Participants* <small class="text-muted">(Max 30 for workshops)</small></label>
+                                <input type="number" class="form-control" id="maxParticipants" name="maxParticipants" min="1" max="30" value="20" required>
+                                <div class="form-text">Workshop attendance is capped at 30 participants for better interaction.</div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="facultyId" class="form-label">Faculty Coordinator*</label>
+                                <select class="form-select" id="facultyId" name="facultyId" required>
+                                    <option value="" selected disabled>Select a faculty coordinator</option>
+                                    <option th:each="faculty : ${faculties}" th:value="${faculty.id}" th:text="${faculty.name + ' (' + faculty.department + ')'}">Dr. Smith (Computer Science)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="agreeTerms" required>
+                                    <label class="form-check-label" for="agreeTerms">
+                                        I agree that this workshop follows all university policies
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="button" class="btn btn-outline-secondary" onclick="window.location.href='/clubhead/events'">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Create Workshop</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize datetime pickers
+            flatpickr(".date-time-picker", {
+                enableTime: true,
+                dateFormat: "Y-m-d H:i",
+                time_24hr: true,
+                minDate: "today"
+            });
+        });
+    </script>
+</body>
+</html>

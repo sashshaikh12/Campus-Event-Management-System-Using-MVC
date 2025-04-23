@@ -6,6 +6,7 @@ import com.example.demo.model.Faculty;
 import com.example.demo.model.RoomRequest;
 import com.example.demo.model.Room;
 import com.example.demo.model.service.EventService;
+import com.example.demo.model.service.ClubHeadService;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.RoomRequestRepository;
 import com.example.demo.repository.RoomRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -40,6 +42,9 @@ public class ClubHeadController {
 
     @Autowired
     private EventRepository eventRepository;
+    
+    @Autowired
+    private ClubHeadService clubHeadService;
     
     /**
      * Get the fixed ClubHead for demo purposes
@@ -198,6 +203,81 @@ public class ClubHeadController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to create event: " + e.getMessage());
             return "redirect:/clubhead/events/create";
+        }
+    }
+    
+    /**
+     * Show form to create a workshop event
+     */
+    @GetMapping("/events/create-workshop")
+    public String createWorkshopForm(Model model) {
+        try {
+            ClubHead clubHead = getCurrentClubHead();
+            
+            // Get all faculties for dropdown
+            List<Faculty> faculties = userRepository.findAll().stream()
+                .filter(user -> user instanceof Faculty)
+                .map(user -> (Faculty) user)
+                .collect(Collectors.toList());
+                
+            model.addAttribute("clubHead", clubHead);
+            model.addAttribute("faculties", faculties);
+            
+            return "clubhead/create-workshop";
+        } catch (Exception e) {
+            System.err.println("Error in createWorkshopForm: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "An error occurred while loading the create workshop form");
+            return "error";
+        }
+    }
+    
+    /**
+     * Process workshop event creation form submission
+     */
+    @PostMapping("/events/create-workshop")
+    public String createWorkshopEvent(@RequestParam("name") String name,
+                             @RequestParam("description") String description,
+                             @RequestParam("startDateTime") String startDateTime,
+                             @RequestParam("endDateTime") String endDateTime,
+                             @RequestParam("venue") String venue,
+                             @RequestParam("maxParticipants") int maxParticipants,
+                             @RequestParam("facultyId") String facultyId,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            ClubHead clubHead = getCurrentClubHead();
+            
+            // Parse date strings to LocalDateTime
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime startDateTimeObj = LocalDateTime.parse(startDateTime, formatter);
+            LocalDateTime endDateTimeObj = LocalDateTime.parse(endDateTime, formatter);
+            
+            // Get the Faculty user
+            Optional<Faculty> facultyOpt = userRepository.findById(facultyId)
+                    .filter(user -> user instanceof Faculty)
+                    .map(user -> (Faculty) user);
+                    
+            if (facultyOpt.isEmpty()) {
+                throw new IllegalArgumentException("Invalid Faculty ID");
+            }
+            
+            Faculty faculty = facultyOpt.get();
+            
+            // Create the workshop event using the specialized workshop event creator
+            Event workshopEvent = clubHeadService.createWorkshopEvent(
+                clubHead, name, description, startDateTimeObj, endDateTimeObj,
+                venue, maxParticipants, faculty
+            );
+            
+            redirectAttributes.addFlashAttribute("successMessage", 
+                "Workshop event created successfully! It is now pending approval from the HOD.");
+            
+            return "redirect:/clubhead/events";
+        } catch (Exception e) {
+            System.err.println("Error in createWorkshopEvent: " + e.getMessage());
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to create workshop event: " + e.getMessage());
+            return "redirect:/clubhead/events/create-workshop";
         }
     }
     
